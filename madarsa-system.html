@@ -512,8 +512,6 @@
     <div style="text-align:right;margin-bottom:14px;"><a href="javascript:void(0)" onclick="forgotPass()" style="font-size:13px;color:#2f4bb5;text-decoration:none;font-weight:600;">Forgot Password?</a></div>
     <div id="loginErr" style="color:#c0392b;font-size:13px;min-height:18px;margin-bottom:8px;text-align:center;"></div>
     <button id="loginBtn" onclick="doLogin()" style="width:100%;padding:14px;background:#111;color:#fff;border:none;border-radius:10px;font-weight:700;font-size:15px;cursor:pointer;">Login</button>
-    <div style="display:flex;align-items:center;gap:10px;margin:16px 0 12px;"><div style="flex:1;height:1px;background:#e5e5e5;"></div><span style="font-size:12px;color:#aaa;">یا / or</span><div style="flex:1;height:1px;background:#e5e5e5;"></div></div>
-    <button type="button" onclick="openPubReg()" style="width:100%;padding:13px;background:#fff;color:#2f4bb5;border:1.5px solid #2f4bb5;border-radius:10px;font-weight:700;font-size:15px;cursor:pointer;">🌐 آن لائن رجسٹریشن — Online Registration</button>
     <div style="text-align:center;margin-top:14px;font-size:12px;color:#888;"><span style="color:#2ecc71;">●</span> Firebase Connected</div>
   </div>
 </div>
@@ -521,7 +519,7 @@
 <div id="pubRegScreen" dir="rtl" style="display:none;position:fixed;inset:0;z-index:100000;background:linear-gradient(135deg,#151d36,#2f4bb5);align-items:flex-start;justify-content:center;overflow:auto;padding:24px 14px;">
   <div style="width:100%;max-width:480px;background:#f8f9fc;border-radius:16px;overflow:hidden;box-shadow:0 24px 70px rgba(0,0,0,.35);">
     <div style="background:#2f4bb5;padding:18px 20px;text-align:center;color:#fff;position:relative;">
-      <button type="button" onclick="closePubReg()" style="position:absolute;left:12px;top:12px;background:rgba(255,255,255,.15);color:#fff;border:none;border-radius:8px;padding:6px 12px;cursor:pointer;font-size:13px;font-family:inherit;">← واپس</button>
+      <button type="button" id="pubBackBtn" onclick="closePubReg()" style="position:absolute;left:12px;top:12px;background:rgba(255,255,255,.15);color:#fff;border:none;border-radius:8px;padding:6px 12px;cursor:pointer;font-size:13px;font-family:inherit;">← واپس</button>
       <div style="font-size:21px;font-weight:800;">مدرسہ فیض رضا</div>
       <div style="font-size:12.5px;color:#c9d5f5;margin-top:4px;">آن لائن رجسٹریشن — Online Registration</div>
     </div>
@@ -2414,7 +2412,7 @@ async function rejectOnlineReg(key){
   catch(e){toast(th2('Failed','ناکام'));}
 }
 function shareRegLink(){
-  const url=location.origin+location.pathname;
+  const url=location.origin+location.pathname+'?register';
   const msg=th2('Online registration for Madarsa Faize Raza — open this link and tap "Online Registration":\n','مدرسہ فیض رضا میں آن لائن رجسٹریشن کے لیے یہ لنک کھولیں اور «آن لائن رجسٹریشن» کا بٹن دبائیں:\n')+url;
   const win=makePopup(false);
   setPopup(win,false,`
@@ -2428,7 +2426,7 @@ function shareRegLink(){
           <button class="btn btn-primary btn-sm rl-copy">📋 ${th2('Copy link','لنک کاپی کریں')}</button>
           <button class="btn btn-ghost btn-sm rl-wa" style="border-color:#25d366;color:#128c7e">💬 WhatsApp</button>
         </div>
-        <p class="set-hint" style="margin-top:12px">${th2('Anyone opening this link sees the login screen with the «Online Registration» button — they can apply without a password.','یہ لنک کھولنے والے کو لاگ اِن اسکرین پر «آن لائن رجسٹریشن» کا بٹن ملے گا — بغیر پاس ورڈ درخواست دے سکتا ہے۔')}</p>
+        <p class="set-hint" style="margin-top:12px">${th2('This special link opens ONLY the public form (no login/admin). Applications arrive in the Website Registration tab. Your normal admin link stays private.','یہ خاص لنک صرف عوامی فارم کھولتا ہے (کوئی لاگ اِن/ایڈمن نہیں)۔ درخواستیں «ویب سائٹ رجسٹریشن» ٹیب میں آتی ہیں۔ آپ کا عام ایڈمن لنک نجی رہتا ہے۔')}</p>
       </div>
     </div>`);
   win.querySelector('.x').onclick=()=>closePopup(win);
@@ -4886,11 +4884,22 @@ function backupRestore(inp){
   };
   r.readAsText(f);
 }
+function isRegisterMode(){
+  return /(?:[?&]register(?:=1)?\b)|(?:#register\b)/i.test(location.search+location.hash);
+}
+function enterRegisterOnly(){
+  // public form ONLY — hide any path to login/admin
+  const login=document.getElementById('loginScreen');if(login)login.style.display='none';
+  const back=document.getElementById('pubBackBtn');if(back)back.style.display='none';
+  openPubReg();
+}
 async function boot(){
+  const regMode=isRegisterMode();
   if(USE_FIREBASE&&typeof firebase!=='undefined'){
     try{
       firebase.initializeApp(firebaseConfig);
       _fbDb=firebase.database();_fbAuth=firebase.auth();
+      if(regMode){enterRegisterOnly();return;}
       document.getElementById('storeBadge').textContent='Firebase…';
       _fbAuth.onAuthStateChanged(async user=>{
         const login=document.getElementById('loginScreen');
@@ -4907,6 +4916,7 @@ async function boot(){
       return;
     }catch(e){console.error('Firebase error:',e);document.getElementById('storeBadge').textContent='Local (Firebase fail)';}
   }
+  if(regMode){enterRegisterOnly();return;}
   startApp();
 }
 boot();
