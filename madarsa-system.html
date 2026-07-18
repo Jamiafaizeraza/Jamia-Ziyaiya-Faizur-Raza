@@ -396,6 +396,15 @@
   .chip-x{all:unset;cursor:pointer;width:22px;height:22px;border-radius:50%;display:grid;place-items:center;font-size:12px;color:var(--danger);background:#fff;transition:.15s;flex-shrink:0;}
   .chip-x:hover{background:#fdeaea;}
   .set-empty{color:var(--muted);font-size:14px;}
+  /* ===== fee settings layout ===== */
+  .fee-add-grid{display:grid;grid-template-columns:2fr 1.4fr 1fr 1fr 1.1fr;gap:10px;align-items:end;background:var(--green-soft);border:1px solid var(--line);border-radius:12px;padding:12px;}
+  .fee-add-grid .fa-f{display:flex;flex-direction:column;gap:4px;min-width:0;}
+  .fee-add-grid .fa-f label{font-size:12px;font-weight:600;color:var(--muted);}
+  .fee-add-grid input,.fee-add-grid select{width:100%;}
+  .fee-head-row{display:grid;grid-template-columns:2fr 1.4fr 1fr 1fr auto;gap:10px;align-items:center;padding:10px;border:1px solid var(--line);border-radius:10px;background:#fff;margin-bottom:8px;}
+  .fee-head-row .lbl{font-size:11px;color:var(--muted);display:block;margin-bottom:2px;}
+  .fee-head-row input,.fee-head-row select{width:100%;}
+  @media(max-width:720px){.fee-add-grid,.fee-head-row{grid-template-columns:1fr 1fr;}.fee-add-grid .fa-f:nth-child(5),.fee-head-row .fhr-x{grid-column:1 / -1;}}
   /* ===== premium polish ===== */
   .sidebar{background:linear-gradient(180deg,#20304f 0%,#151d36 100%);}
   .brand .logo{background:linear-gradient(135deg,#3b5bdb,#4c6ef5);}
@@ -468,6 +477,16 @@
   .wz-nav{display:flex;justify-content:space-between;gap:10px;margin-top:22px;padding-top:16px;border-top:1px solid var(--line);}
   .wz-sub{font-size:12.5px;font-weight:700;color:var(--green-2);text-transform:uppercase;letter-spacing:.5px;margin:20px 0 10px;padding-bottom:6px;border-bottom:1px dashed var(--line);}
   @media(max-width:620px){.wz-choice{grid-template-columns:1fr;}}
+  .req-star{color:var(--danger);font-weight:700;}
+  .field.wz-err input,.field.wz-err select,.field.wz-err textarea{border-color:var(--danger)!important;background:#fff5f5!important;}
+  .field.wz-err label{color:var(--danger);}
+  .wz-errmsg{color:var(--danger);font-size:11.5px;font-weight:600;margin-top:3px;}
+  .wz-invalid{border-color:var(--danger)!important;background:#fff5f5!important;box-shadow:0 0 0 2px rgba(220,38,38,.12);}
+  .wz-err{color:var(--danger);font-size:12px;font-weight:600;margin-top:4px;}
+  .req-star{color:var(--danger);}
+  .field label.req::after{content:" *";color:var(--danger);font-weight:800;}
+  .wz-invalid{border-color:var(--danger)!important;background:#fdeaea!important;}
+  .wz-err{color:var(--danger);font-size:11.5px;font-weight:600;margin-top:4px;}
   /* ===== pagination ===== */
   .pager{display:flex;align-items:center;justify-content:center;gap:6px;flex-wrap:wrap;padding:14px;border-top:1px solid var(--line);}
   .pager button{all:unset;cursor:pointer;min-width:34px;text-align:center;padding:7px 11px;border-radius:9px;border:1.5px solid var(--line);background:#fff;font-size:14px;font-weight:600;color:var(--ink);transition:.12s;}
@@ -622,11 +641,27 @@
         <div class="section">
           <div class="section-head"><div class="n">+</div><h3 data-ur="نیا رجسٹریشن" data-en="New Registration">نیا رجسٹریشن</h3>
             <button class="btn btn-ghost btn-sm no-drag" onclick="downloadAdmissionForm()" style="margin-inline-start:auto" data-ur="⬇ داخلہ فارم ڈاؤن لوڈ" data-en="⬇ Download Admission Form">⬇ داخلہ فارم</button></div>
+
+          <div style="padding:4px 20px 8px;max-width:560px">
+            <div class="field"><label data-ur="رجسٹریشن کی قسم *" data-en="Registration type *">رجسٹریشن کی قسم *</label>
+              <select id="rgType" onchange="rgTypeChange()">
+                <option value="" data-ur="— منتخب کریں —" data-en="— Select —">— منتخب کریں —</option>
+                <option value="father" data-ur="والد کا آدھار کارڈ" data-en="Father's Aadhaar">والد کا آدھار کارڈ</option>
+                <option value="special" data-ur="خصوصی داخلہ (والد کا پتہ نہیں)" data-en="Special Admission (father unknown)">خصوصی داخلہ</option>
+              </select></div>
+            <div class="field" id="rgFatherAadharWrap" style="display:none"><label data-ur="والد کا آدھار نمبر *" data-en="Father's Aadhaar No *">والد کا آدھار نمبر *</label>
+              <input type="text" id="rgFatherAadhar" inputmode="numeric" maxlength="14" style="direction:ltr;text-align:start" placeholder="XXXX XXXX XXXX"></div>
+            <div class="field" id="rgSpecialWrap" style="display:none"><label data-ur="خصوصی نمبر (خودکار)" data-en="Special number (auto)">خصوصی نمبر</label>
+              <input type="text" id="rgSpecialNo" readonly style="direction:ltr;text-align:start;background:var(--green-soft);font-weight:700"></div>
+            <button class="btn btn-primary btn-sm" id="rgContinueBtn" style="display:none;margin-top:4px" onclick="rgContinue()" data-ur="آگے →" data-en="Continue →">آگے →</button>
+            <div id="rgTypeErr" style="color:var(--danger);font-size:13px;font-weight:600;margin-top:6px"></div>
+          </div>
+
+          <div id="rgFormBody" style="display:none">
           <div class="grid" style="padding:0 20px">
             <div class="field"><label data-ur="طالبِ علم کا نام *" data-en="Student Name *">طالبِ علم کا نام *</label><input type="text" id="rgName"></div>
             <div class="field"><label data-ur="والد کا نام *" data-en="Father Name *">والد کا نام *</label><input type="text" id="rgFather"></div>
-            <div class="field"><label data-ur="طالبِ علم کا آدھار نمبر *" data-en="Student Aadhaar No *">طالبِ علم کا آدھار نمبر *</label><input type="text" id="rgStudentAadhar" inputmode="numeric" style="direction:ltr;text-align:start"></div>
-            <div class="field"><label data-ur="والد / سرپرست آدھار نمبر *" data-en="Parent / Guardian Aadhaar No *">والد / سرپرست آدھار نمبر *</label><input type="text" id="rgGuardianAadhar" inputmode="numeric" style="direction:ltr;text-align:start"></div>
+            <div class="field"><label data-ur="طالبِ علم کا آدھار نمبر" data-en="Student Aadhaar No">طالبِ علم کا آدھار نمبر</label><input type="text" id="rgStudentAadhar" inputmode="numeric" style="direction:ltr;text-align:start"></div>
             <div class="field"><label data-ur="تاریخِ پیدائش * (DD-MM-YYYY)" data-en="Date of Birth * (DD-MM-YYYY)">تاریخِ پیدائش *</label>
               <div style="display:flex;gap:6px"><input type="text" id="rgDob" inputmode="numeric" maxlength="10" placeholder="DD-MM-YYYY" oninput="dobFormat(this);rgCalcAge()" style="flex:1;direction:ltr;text-align:start">
               <input type="date" onchange="dobFromPicker(this,'rgDob','rgCalcAge')" title="📅" style="width:44px;flex:none;padding:0 4px"></div></div>
@@ -656,6 +691,7 @@
           <div class="form-actions" style="padding:6px 20px 20px">
             <button class="btn btn-primary btn-sm" onclick="saveRegSimple()" data-ur="رجسٹریشن کریں" data-en="Submit">رجسٹریشن کریں</button>
             <button class="btn btn-ghost btn-sm" onclick="resetRegSimple()" data-ur="صاف کریں" data-en="Clear">صاف کریں</button>
+          </div>
           </div>
         </div>
 
@@ -742,13 +778,13 @@
             <div class="grid" style="padding:0 20px">
               <div class="field"><label data-ur="رجسٹریشن نمبر" data-en="Registration no">رجسٹریشن نمبر</label><input type="text" id="wzRegNo" readonly style="direction:ltr;text-align:start"></div>
               <div class="field"><label data-ur="داخلہ نمبر" data-en="Admission no">داخلہ نمبر</label><input type="text" id="wzAdmNo" readonly style="direction:ltr;text-align:start"></div>
-              <div class="field"><label data-ur="اردو میں نام" data-en="Name (Urdu)">اردو میں نام</label><input type="text" id="wzNameUr" dir="rtl"></div>
-              <div class="field"><label data-ur="انگریزی میں نام (آدھار کے مطابق)" data-en="Name in English (as per Aadhaar)">انگریزی میں نام</label><input type="text" id="wzNameEn" dir="ltr"></div>
-              <div class="field"><label data-ur="اردو میں والد کا نام" data-en="Father name (Urdu)">اردو میں والد کا نام</label><input type="text" id="wzFatherUr" dir="rtl"></div>
-              <div class="field"><label data-ur="انگریزی میں والد کا نام" data-en="Father name (English)">انگریزی میں والد کا نام</label><input type="text" id="wzFatherEn" dir="ltr"></div>
-              <div class="field"><label data-ur="طالب علم کا شناختی کارڈ (آدھار)" data-en="Student ID (Aadhaar)">طالب علم کا شناختی کارڈ</label><input type="text" id="wzStudentAadhar" inputmode="numeric" style="direction:ltr;text-align:start"></div>
-              <div class="field"><label data-ur="والد کا شناختی کارڈ" data-en="Father's ID (Aadhaar)">والد کا شناختی کارڈ</label><input type="text" id="wzFatherAadhar2" inputmode="numeric" style="direction:ltr;text-align:start"></div>
-              <div class="field"><label data-ur="پیدائش کی تاریخ (DD-MM-YYYY)" data-en="Date of birth (DD-MM-YYYY)">پیدائش کی تاریخ</label>
+              <div class="field"><label data-ur="اردو میں نام" data-en="Name (Urdu)">اردو میں نام<span class="req-star"> *</span></label><input type="text" id="wzNameUr" dir="rtl"></div>
+              <div class="field"><label data-ur="انگریزی میں نام (آدھار کے مطابق)" data-en="Name in English (as per Aadhaar)">انگریزی میں نام<span class="req-star"> *</span></label><input type="text" id="wzNameEn" dir="ltr"></div>
+              <div class="field"><label data-ur="اردو میں والد کا نام" data-en="Father name (Urdu)">اردو میں والد کا نام<span class="req-star"> *</span></label><input type="text" id="wzFatherUr" dir="rtl"></div>
+              <div class="field"><label data-ur="انگریزی میں والد کا نام" data-en="Father name (English)">انگریزی میں والد کا نام<span class="req-star"> *</span></label><input type="text" id="wzFatherEn" dir="ltr"></div>
+              <div class="field"><label data-ur="طالب علم کا شناختی کارڈ (آدھار)" data-en="Student ID (Aadhaar)">طالب علم کا شناختی کارڈ<span class="req-star"> *</span></label><input type="text" id="wzStudentAadhar" inputmode="numeric" style="direction:ltr;text-align:start"></div>
+              <div class="field"><label data-ur="والد کا شناختی کارڈ" data-en="Father's ID (Aadhaar)">والد کا شناختی کارڈ<span class="req-star"> *</span></label><input type="text" id="wzFatherAadhar2" inputmode="numeric" style="direction:ltr;text-align:start"></div>
+              <div class="field"><label data-ur="پیدائش کی تاریخ (DD-MM-YYYY)" data-en="Date of birth (DD-MM-YYYY)">پیدائش کی تاریخ<span class="req-star"> *</span></label>
                 <div style="display:flex;gap:6px"><input type="text" id="wzDob" inputmode="numeric" maxlength="10" placeholder="DD-MM-YYYY" oninput="dobFormat(this);wzCalcAge()" style="flex:1;direction:ltr;text-align:start">
                 <input type="date" onchange="dobFromPicker(this,'wzDob','wzCalcAge')" title="📅" style="width:44px;flex:none;padding:0 4px"></div></div>
               <div class="field"><label data-ur="عمر" data-en="Age">عمر</label><input type="text" id="wzAge" readonly placeholder="—"></div>
@@ -762,7 +798,7 @@
               </div></div>
             </div>
             <div class="wz-nav" style="padding:0 20px 20px">
-              <span></span>
+              <button class="btn btn-ghost btn-sm" onclick="wzSaveDraft()" title="Ctrl+S" data-ur="💾 محفوظ کریں (ابھی)" data-en="💾 Save progress">💾 محفوظ کریں</button>
               <button class="btn btn-primary btn-sm" onclick="wzNext(1)" data-ur="آگے →" data-en="Next →">آگے →</button>
             </div>
           </div>
@@ -776,20 +812,51 @@
                   <option value="nonresident" data-ur="غیر وقتی" data-en="Non-resident">غیر وقتی</option>
                 </select></div>
               <div class="field"><label data-ur="ملک" data-en="Country">ملک</label><input type="text" id="wzCountry" value="India"></div>
-              <div class="field"><label data-ur="جامعۃ المدینہ کے کس کورس میں داخلہ" data-en="Course / class">کس کورس میں داخلہ</label><select id="wzCourse"></select></div>
+              <div class="field"><label data-ur="جامعۃ المدینہ کے کس کورس میں داخلہ" data-en="Course / class">کس کورس میں داخلہ<span class="req-star"> *</span></label><select id="wzCourse"></select></div>
             </div>
             <div class="wz-nav" style="padding:0 20px 20px">
               <button class="btn btn-ghost btn-sm" onclick="wzGo(1)" data-ur="← پیچھے" data-en="← Back">← پیچھے</button>
-              <button class="btn btn-primary btn-sm" onclick="wzNext(2)" data-ur="آگے →" data-en="Next →">آگے →</button>
+              <div style="display:flex;gap:8px">
+                <button class="btn btn-ghost btn-sm" onclick="wzSaveDraft()" title="Ctrl+S" data-ur="💾 محفوظ کریں" data-en="💾 Save progress">💾 محفوظ کریں</button>
+                <button class="btn btn-primary btn-sm" onclick="wzNext(2)" data-ur="آگے →" data-en="Next →">آگے →</button>
+              </div>
             </div>
           </div>
 <div class="wz-page" id="wzPage3">
             <div class="section-head"><div class="n">3</div><h3 data-ur="مکمل تفصیلات" data-en="Full details">مکمل تفصیلات</h3></div>
             <div style="padding:0 20px">
               <div class="wz-sub" data-ur="پتہ" data-en="Address">پتہ</div>
-              <div class="field full"><label data-ur="مکمل پتہ" data-en="Full address">مکمل پتہ</label><textarea id="wzAddress" rows="2"></textarea></div>
+              <div id="wzAddrCur" class="grid">
+                <div class="field full" style="margin-bottom:2px"><b style="color:var(--green-2);font-size:13px" data-ur="موجودہ پتہ" data-en="Current address">موجودہ پتہ</b> <span class="req-star">*</span></div>
+                <div class="field"><label data-ur="مکان نمبر" data-en="House #">مکان نمبر</label><input type="text" id="wzAddr_house"></div>
+                <div class="field"><label data-ur="گلی نمبر" data-en="Street #">گلی نمبر</label><input type="text" id="wzAddr_street"></div>
+                <div class="field"><label data-ur="محلہ / علاقہ" data-en="Mohalla / Area">محلہ / علاقہ</label><input type="text" id="wzAddr_area"></div>
+                <div class="field"><label data-ur="شہر / گاؤں" data-en="City / Village">شہر / گاؤں<span class="req-star"> *</span></label><input type="text" id="wzAddr_city"></div>
+                <div class="field"><label data-ur="تحصیل" data-en="Tehsil">تحصیل</label><input type="text" id="wzAddr_teh"></div>
+                <div class="field"><label data-ur="ضلع" data-en="District">ضلع<span class="req-star"> *</span></label><input type="text" id="wzAddr_dist"></div>
+                <div class="field"><label data-ur="ریاست / صوبہ" data-en="State / Province">ریاست</label><input type="text" id="wzAddr_state"></div>
+                <div class="field"><label data-ur="پن کوڈ" data-en="Pincode">پن کوڈ</label><input type="text" id="wzAddr_pin" inputmode="numeric" style="direction:ltr;text-align:start"></div>
+                <div class="field"><label data-ur="ملک" data-en="Country">ملک</label><input type="text" id="wzAddr_country" value="India"></div>
+              </div>
+              <div class="field full" style="margin-top:6px">
+                <label style="display:flex;align-items:center;gap:7px;font-size:13px;font-weight:600;cursor:pointer;color:var(--green-2)">
+                  <input type="checkbox" id="wzAddrPermSame" onchange="wzAddrPermSame(this)" style="width:auto"> <span data-ur="مستقل پتہ، موجودہ جیسا ہی ہے" data-en="Permanent address same as current">مستقل پتہ، موجودہ جیسا ہی ہے</span>
+                </label>
+              </div>
+              <div id="wzAddrPerm" class="grid">
+                <div class="field full" style="margin-bottom:2px"><b style="color:var(--green-2);font-size:13px" data-ur="مستقل پتہ" data-en="Permanent address">مستقل پتہ</b> <span class="req-star">*</span></div>
+                <div class="field"><label data-ur="مکان نمبر" data-en="House #">مکان نمبر</label><input type="text" id="wzPAddr_house"></div>
+                <div class="field"><label data-ur="گلی نمبر" data-en="Street #">گلی نمبر</label><input type="text" id="wzPAddr_street"></div>
+                <div class="field"><label data-ur="محلہ / علاقہ" data-en="Mohalla / Area">محلہ / علاقہ</label><input type="text" id="wzPAddr_area"></div>
+                <div class="field"><label data-ur="شہر / گاؤں" data-en="City / Village">شہر / گاؤں<span class="req-star"> *</span></label><input type="text" id="wzPAddr_city"></div>
+                <div class="field"><label data-ur="تحصیل" data-en="Tehsil">تحصیل</label><input type="text" id="wzPAddr_teh"></div>
+                <div class="field"><label data-ur="ضلع" data-en="District">ضلع<span class="req-star"> *</span></label><input type="text" id="wzPAddr_dist"></div>
+                <div class="field"><label data-ur="ریاست / صوبہ" data-en="State / Province">ریاست</label><input type="text" id="wzPAddr_state"></div>
+                <div class="field"><label data-ur="پن کوڈ" data-en="Pincode">پن کوڈ</label><input type="text" id="wzPAddr_pin" inputmode="numeric" style="direction:ltr;text-align:start"></div>
+                <div class="field"><label data-ur="ملک" data-en="Country">ملک</label><input type="text" id="wzPAddr_country" value="India"></div>
+              </div>
 
-              <div class="wz-sub" data-ur="مصروفیات (والد/سرپرست)" data-en="Occupation (father/guardian)">مصروفیات</div>
+              <div class="wz-sub" data-ur="مصروفیات (والد/سرپرست)" data-en="Occupation (father/guardian)">مصروفیات<span class="req-star"> *</span></div>
               <div class="field" style="max-width:360px"><select id="wzOccupation">
                 <option value="business" data-ur="کاروبار" data-en="Business">کاروبار</option>
                 <option value="private" data-ur="پرائیویٹ ملازمت" data-en="Private job">پرائیویٹ ملازمت</option>
@@ -798,11 +865,11 @@
 
               <div class="wz-sub" data-ur="تعلیم" data-en="Education">تعلیم</div>
               <div class="grid">
-                <div class="field"><label data-ur="دنیاوی — درجہ/کلاس" data-en="Worldly — class">دنیاوی — درجہ</label><input type="text" id="wzEduWClass"></div>
-                <div class="field"><label data-ur="دنیاوی — اسکول" data-en="Worldly — school">دنیاوی — اسکول</label><input type="text" id="wzEduWSchool"></div>
-                <div class="field"><label data-ur="دنیاوی — سالِ فراغت" data-en="Worldly — year passed">دنیاوی — سال</label><input type="text" id="wzEduWYear" inputmode="numeric" style="direction:ltr;text-align:start"></div>
-                <div class="field"><label data-ur="دینی — درجہ/کلاس" data-en="Deeni — class">دینی — درجہ</label><input type="text" id="wzEduDClass"></div>
-                <div class="field"><label data-ur="دینی — مدرسہ" data-en="Deeni — madrasa">دینی — مدرسہ</label><input type="text" id="wzEduDSchool"></div>
+                <div class="field"><label data-ur="دنیاوی — درجہ/کلاس" data-en="Worldly — class">دنیاوی — درجہ<span class="req-star"> *</span></label><input type="text" id="wzEduWClass"></div>
+                <div class="field"><label data-ur="دنیاوی — اسکول" data-en="Worldly — school">دنیاوی — اسکول<span class="req-star"> *</span></label><input type="text" id="wzEduWSchool"></div>
+                <div class="field"><label data-ur="دنیاوی — سالِ فراغت" data-en="Worldly — year passed">دنیاوی — سال<span class="req-star"> *</span></label><input type="text" id="wzEduWYear" inputmode="numeric" style="direction:ltr;text-align:start"></div>
+                <div class="field"><label data-ur="دینی — درجہ/کلاس" data-en="Deeni — class">دینی — درجہ<span class="req-star"> *</span></label><input type="text" id="wzEduDClass"></div>
+                <div class="field"><label data-ur="دینی — مدرسہ" data-en="Deeni — madrasa">دینی — مدرسہ<span class="req-star"> *</span></label><input type="text" id="wzEduDSchool"></div>
                 <div class="field"><label data-ur="دینی — سالِ فراغت" data-en="Deeni — year passed">دینی — سال</label><input type="text" id="wzEduDYear" inputmode="numeric" style="direction:ltr;text-align:start"></div>
               </div>
 
@@ -810,7 +877,7 @@
               <div class="grid">
                 <div class="field"><label data-ur="ازدواجی حالت" data-en="Marital status">ازدواجی حالت</label>
                   <select id="wzMarital"><option value="single" data-ur="غیر شادی شدہ" data-en="Single">غیر شادی شدہ</option><option value="married" data-ur="شادی شدہ" data-en="Married">شادی شدہ</option></select></div>
-                <div class="field"><label data-ur="والدین" data-en="Parents">والدین</label>
+                <div class="field"><label data-ur="والدین" data-en="Parents">والدین<span class="req-star"> *</span></label>
                   <select id="wzParents">
                     <option value="both" data-ur="دونوں حیات" data-en="Both alive">دونوں حیات</option>
                     <option value="father" data-ur="صرف والد حیات" data-en="Only father">صرف والد حیات</option>
@@ -823,21 +890,26 @@
 
               <div class="wz-sub" data-ur="سرپرست (جو داخلہ کرا رہا ہے)" data-en="Guardian (who is admitting)">سرپرست</div>
               <div class="grid">
-                <div class="field"><label data-ur="طالب علم سے رشتہ" data-en="Relation to student">طالب علم سے رشتہ</label><input type="text" id="wzGRelation" data-ur-ph="مثلاً والد، چچا، بھائی" data-en-ph="e.g. father, uncle, brother"></div>
+                <div class="field"><label data-ur="طالب علم سے رشتہ" data-en="Relation to student">طالب علم سے رشتہ<span class="req-star"> *</span></label><input type="text" id="wzGRelation" data-ur-ph="مثلاً والد، چچا، بھائی" data-en-ph="e.g. father, uncle, brother"></div>
                 <div class="field"><label data-ur="شناختی کارڈ نمبر" data-en="ID card number">شناختی کارڈ نمبر</label><input type="text" id="wzGAadhar" style="direction:ltr;text-align:start"></div>
                 <div class="field"><label data-ur="فون نمبر" data-en="Phone number">فون نمبر</label><input type="tel" id="wzGPhone" style="direction:ltr;text-align:start"></div>
                 <div class="field"><label data-ur="مادری زبان" data-en="Mother tongue">مادری زبان</label><input type="text" id="wzGMotherTongue"></div>
                 <div class="field"><label data-ur="ای میل ایڈریس" data-en="Email address">ای میل ایڈریس</label><input type="email" id="wzGEmail" style="direction:ltr;text-align:start"></div>
-                <div class="field"><label data-ur="مصروفیت" data-en="Occupation">مصروفیت</label>
+                <div class="field"><label data-ur="مصروفیت" data-en="Occupation">مصروفیت<span class="req-star"> *</span></label>
                   <select id="wzGOccupation"><option value="business" data-ur="کاروبار" data-en="Business">کاروبار</option><option value="private" data-ur="پرائیویٹ ملازمت" data-en="Private job">پرائیویٹ ملازمت</option><option value="govt" data-ur="گورنمنٹ ملازمت" data-en="Government job">گورنمنٹ ملازمت</option></select></div>
-                <div class="field full"><label data-ur="سرپرست کا پتہ" data-en="Guardian address">سرپرست کا پتہ</label><textarea id="wzGAddress" rows="2"></textarea></div>
+                <div class="field full"><label data-ur="سرپرست کا پتہ" data-en="Guardian address">سرپرست کا پتہ<span class="req-star"> *</span></label>
+                  <label style="display:flex;align-items:center;gap:7px;font-size:13px;font-weight:600;margin:2px 0 6px;cursor:pointer;color:var(--green-2)">
+                    <input type="checkbox" id="wzGAddrSame" onchange="wzGAddrSame(this)" style="width:auto"> <span data-ur="موجودہ پتے جیسا" data-en="Same as current address">موجودہ پتے جیسا</span>
+                  </label>
+                  <textarea id="wzGAddress" rows="2"></textarea></div>
               </div>
             </div>
             <div class="wz-nav" style="padding:0 20px 20px">
               <button class="btn btn-ghost btn-sm" onclick="wzGo(2)" data-ur="← پیچھے" data-en="← Back">← پیچھے</button>
               <div style="display:flex;gap:8px">
                 <button class="btn btn-ghost btn-sm" onclick="wzReset()" data-ur="نیا" data-en="New">نیا</button>
-                <button class="btn btn-primary btn-sm" id="wzSaveBtn" onclick="wzSave()" data-ur="✓ محفوظ کریں" data-en="✓ Save">✓ محفوظ کریں</button>
+                <button class="btn btn-ghost btn-sm" onclick="wzSaveDraft()" title="Ctrl+S" data-ur="💾 محفوظ کریں (ابھی)" data-en="💾 Save progress">💾 محفوظ کریں</button>
+                <button class="btn btn-primary btn-sm" id="wzSaveBtn" onclick="wzSave()" data-ur="✓ مکمل محفوظ" data-en="✓ Save (complete)">✓ مکمل محفوظ</button>
               </div>
             </div>
           </div>
@@ -1308,14 +1380,30 @@
           <div class="set-card" data-setcard="fees">
             <div class="section-head"><div class="n">💰</div><h3 data-ur="فیس سیٹنگ" data-en="Fee settings">فیس سیٹنگ</h3></div>
             <div class="set-body">
-              <p class="set-hint" data-ur="مدات بنائیں۔ «ماہانہ» والی مدات (فیس، کھانا) ہر مہینے کی فیس میں جُڑتی ہیں۔ «ایک بار / امتحان» والی (داخلہ فیس، امتحان فیس) جمع کرتے وقت لگائی جا سکتی ہیں۔" data-en="Add fee heads. «Monthly» heads (fee, food) add up to the monthly fee. «One-time/Exam» heads (admission, exam) can be added while collecting.">مدات بنائیں۔ «ماہانہ» والی (فیس، کھانا) ہر ماہ جُڑتی ہیں؛ «ایک بار / امتحان» والی (داخلہ، امتحان) جمع کرتے وقت لگتی ہیں۔</p>
-              <div class="set-add" style="flex-wrap:wrap">
-                <input type="text" id="feeHeadName" style="min-width:170px" data-ur-ph="مد کا نام — مثلاً کھانا، داخلہ فیس" data-en-ph="Head name — e.g. Food, Admission">
-                <select id="feeHeadType"><option value="monthly" data-ur="ماہانہ" data-en="Monthly">ماہانہ</option><option value="onetime" data-ur="ایک بار / امتحان" data-en="One-time / Exam">ایک بار / امتحان</option></select>
-                <input type="number" id="feeHeadAmt" style="max-width:110px" data-ur-ph="رقم ₹" data-en-ph="Amount ₹">
-                <button class="btn btn-primary btn-sm" onclick="addFeeHead()" data-ur="شامل کریں" data-en="Add">شامل کریں</button>
+              <p class="set-hint" data-ur="ہر مد کا نام، قسم (ماہانہ/ایک بار)، اور «پرانے» و «نئے» طلباء کی الگ رقم رکھ سکتے ہیں۔ نئے کا خانہ خالی چھوڑیں تو وہی رقم لگے گی۔ ناشتہ جیسی نئی مد «شامل کریں» سے بنائیں، «✕» سے ہٹائیں۔" data-en="Each head has a name, type (Monthly/One-time), and separate amounts for «Old» and «New» students. Leave New blank to use the same amount. Add heads like Nashta with «Add», remove with «✕».">ہر مد کا نام، قسم، اور پرانے/نئے طلباء کی الگ رقم رکھ سکتے ہیں۔ ناشتہ جیسی نئی مد شامل کریں، «✕» سے ہٹائیں۔</p>
+              <label style="display:flex;align-items:center;gap:8px;margin:0 0 12px;font-size:13.5px;font-weight:600;background:#fff;border:1px solid var(--line);border-radius:8px;padding:9px 12px;max-width:520px;cursor:pointer">
+                <input type="checkbox" id="feeAutoDues" onchange="setAutoDues(this.checked)">
+                <span data-ur="خودکار ماہانہ بقایا بنائیں (بند = خود فریش انٹری کریں)" data-en="Auto monthly dues (off = you do fresh entry yourself)">خودکار ماہانہ بقایا بنائیں (بند = خود فریش انٹری کریں)</span>
+              </label>
+              <div class="fee-add-grid">
+                <div class="fa-f"><label data-ur="مد کا نام" data-en="Head name">مد کا نام</label><input type="text" id="feeHeadName" data-ur-ph="مثلاً کھانا، ناشتہ، داخلہ" data-en-ph="e.g. Food, Nashta, Admission"></div>
+                <div class="fa-f"><label data-ur="قسم" data-en="Type">قسم</label><select id="feeHeadType"><option value="monthly" data-ur="ماہانہ" data-en="Monthly">ماہانہ</option><option value="onetime" data-ur="ایک بار / امتحان" data-en="One-time / Exam">ایک بار / امتحان</option></select></div>
+                <div class="fa-f"><label data-ur="پرانے طلباء ₹" data-en="Old students ₹">پرانے ₹</label><input type="number" id="feeHeadAmt" placeholder="₹"></div>
+                <div class="fa-f"><label data-ur="نئے طلباء ₹" data-en="New students ₹">نئے ₹</label><input type="number" id="feeHeadAmtNew" data-ur-ph="اختیاری" data-en-ph="optional"></div>
+                <div class="fa-f"><label>&nbsp;</label><button class="btn btn-primary btn-sm" style="width:100%" onclick="addFeeHead()" data-ur="＋ شامل کریں" data-en="＋ Add">＋ شامل کریں</button></div>
               </div>
-              <div id="feeHeadList" style="margin-top:6px"></div>
+              <div id="feeHeadList" style="margin-top:12px"></div>
+
+              <div style="margin-top:18px;padding-top:14px;border-top:1px dashed var(--line)">
+                <div style="font-weight:700;font-size:14px;margin-bottom:4px">📅 <span data-ur="ماہانہ فیس کی تاریخ وار تبدیلی" data-en="Date-wise monthly fee changes">ماہانہ فیس کی تاریخ وار تبدیلی</span></div>
+                <p class="set-hint" data-ur="اگر آپ کی ماہانہ فیس وقت کے ساتھ بدلتی ہے تو یہاں «کس مہینے سے» اور «رقم» ڈالیں۔ پرانے مہینے پرانی رقم پر، نئے مہینے نئی رقم پر رہیں گے۔ خالی چھوڑیں تو اوپر والی «ماہانہ» مدات کا مجموعہ لگے گا۔" data-en="If your monthly fee changes over time, add «From month» and «Amount» here. Old months keep the old rate, new months use the new rate. Leave empty to use the sum of Monthly heads above.">اگر ماہانہ فیس وقت کے ساتھ بدلتی ہے تو «کس مہینے سے» اور رقم ڈالیں۔ پرانے مہینے پرانی رقم پر رہیں گے۔</p>
+                <div class="set-add" style="flex-wrap:wrap">
+                  <input type="month" id="feeSchFrom" style="max-width:170px">
+                  <input type="number" id="feeSchAmt" style="max-width:130px" data-ur-ph="ماہانہ رقم ₹" data-en-ph="Monthly amount ₹">
+                  <button class="btn btn-primary btn-sm" onclick="addFeeSchedule()" data-ur="＋ شامل کریں" data-en="＋ Add">＋ شامل کریں</button>
+                </div>
+                <div id="feeSchList" style="margin-top:8px"></div>
+              </div>
             </div>
           </div>
 
@@ -1630,10 +1718,23 @@ function getFeeConfig(){
   return c;
 }
 function saveFeeConfig(c){localStorage.setItem(FEE_KEY,JSON.stringify(c));}
-function headAmt(h,cls){const ca=h.classAmount&&h.classAmount[cls];return (ca!=null&&ca!=='')?Number(ca):Number(h.amount||0);}
-function monthlyFeeFor(cls){return getFeeConfig().heads.filter(h=>h.type==='monthly').reduce((s,h)=>s+headAmt(h,cls),0);}
+function isNewStudent(s){
+  if(!s)return false;
+  const y=new Date().getFullYear();let ay=null;
+  const d=parseDob(s.admissionDate);
+  if(d)ay=d.getFullYear();
+  else if(s.admittedAt)ay=new Date(s.admittedAt).getFullYear();
+  return ay===y;
+}
+function headAmt(h,cls,isNew){
+  const ca=h.classAmount&&h.classAmount[cls];
+  if(ca!=null&&ca!=='')return Number(ca);
+  if(isNew&&h.amountNew!=null&&h.amountNew!=='')return Number(h.amountNew);
+  return Number(h.amount||0);
+}
+function monthlyFeeFor(cls,isNew){return getFeeConfig().heads.filter(h=>h.type==='monthly').reduce((s,h)=>s+headAmt(h,cls,isNew),0);}
 function otherHeads(){return getFeeConfig().heads.filter(h=>h.type!=='monthly');}
-function feeFor(cls){return monthlyFeeFor(cls);}
+function feeFor(cls,isNew){return monthlyFeeFor(cls,isNew);}
 function getFeePayments(){return JSON.parse(localStorage.getItem(FEEPAY_KEY)||'[]');}
 function saveFeePayments(a){localStorage.setItem(FEEPAY_KEY,JSON.stringify(a));}
 function ym(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');}
@@ -1642,9 +1743,24 @@ function admissionMonth(s){const d=s.admissionDate||s.regDate||today();return St
 function monthsFromTo(fromYM,toYM){const res=[];let a=fromYM.split('-').map(Number),b=toYM.split('-').map(Number);let y=a[0],m=a[1];while(y<b[0]||(y===b[0]&&m<=b[1])){res.push(y+'-'+String(m).padStart(2,'0'));m++;if(m>12){m=1;y++;}if(res.length>600)break;}return res;}
 function studentPaidMonths(sid){const set={};getFeePayments().filter(p=>p.sid===sid&&p.month).forEach(p=>{set[p.month]=true;});return set;}
 function studentPayMap(sid){const map={};getFeePayments().filter(p=>p.sid===sid&&p.month).forEach(p=>{map[p.month]=p;});return map;}
+function getFeeSchedule(){const c=getFeeConfig();return Array.isArray(c.schedule)?c.schedule.slice().sort((a,b)=>String(a.from).localeCompare(String(b.from))):[];}
+function scheduledMonthlyFee(month){
+  const sch=getFeeSchedule();if(!sch.length)return null;
+  let amt=null;sch.forEach(e=>{if(String(e.from)<=String(month))amt=Number(e.amount||0);});
+  return amt;
+}
+function monthlyFeeForMonth(s,month){
+  const sc=scheduledMonthlyFee(month);
+  if(sc!=null)return sc;
+  return monthlyFeeFor(s.cls,isNewStudent(s));
+}
+function getAutoDues(){return getFeeConfig().autoDues===true;}
 function studentDues(s){
-  if(s.feeExempt)return {owed:[],unpaid:[],fee:feeFor(s.cls),duesAmt:0,exempt:true};
-  const owed=monthsFromTo(admissionMonth(s),ym(new Date()));const paid=studentPaidMonths(s.id);const fee=feeFor(s.cls);const unpaid=owed.filter(m=>!paid[m]);return {owed,unpaid,fee,duesAmt:unpaid.length*fee};
+  if(s.feeExempt)return {owed:[],unpaid:[],fee:feeFor(s.cls,isNewStudent(s)),duesAmt:0,exempt:true};
+  if(!getAutoDues())return {owed:[],unpaid:[],fee:feeFor(s.cls,isNewStudent(s)),duesAmt:0};
+  const owed=monthsFromTo(admissionMonth(s),ym(new Date()));const paid=studentPaidMonths(s.id);const fee=feeFor(s.cls,isNewStudent(s));const unpaid=owed.filter(m=>!paid[m]);
+  const duesAmt=unpaid.reduce((x,m)=>x+monthlyFeeForMonth(s,m),0);
+  return {owed,unpaid,fee,duesAmt};
 }
 function nextReceiptNo(){let mx=0;getFeePayments().forEach(p=>{if(p.receiptNo&&p.receiptNo>mx)mx=p.receiptNo;});return mx+1;}
 /* ===== LIBRARY ===== */
@@ -1771,7 +1887,7 @@ function applyLang(){
   document.body.classList.toggle('ltr',!isUr);
   document.getElementById('lang-ur').classList.toggle('active',isUr);
   document.getElementById('lang-en').classList.toggle('active',!isUr);
-  document.querySelectorAll('[data-ur]').forEach(el=>{el.textContent=isUr?el.dataset.ur:el.dataset.en;});
+  document.querySelectorAll('[data-ur]').forEach(el=>{const hadStar=!!el.querySelector('.req-star');el.textContent=isUr?el.dataset.ur:el.dataset.en;if(hadStar){const st=document.createElement('span');st.className='req-star';st.textContent=' *';el.appendChild(st);}});
   document.querySelectorAll('[data-ur-ph]').forEach(el=>{el.placeholder=isUr?el.dataset.urPh:el.dataset.enPh;});
   const pp=document.getElementById('photoPrev');
   if(pp&&!pp.querySelector('img'))pp.innerHTML=t('noPhoto');
@@ -2091,8 +2207,11 @@ function wzGo(step){
   window.scrollTo(0,0);
 }
 function wzNext(from){
-  if(from===1){
-    if(!document.getElementById('wzNameEn').value.trim()&&!document.getElementById('wzNameUr').value.trim()){toast(th2('Enter student name','طالب علم کا نام لکھیں'));return;}
+  const {fields,firstStep}=wzMissing(from);
+  if(fields.length){
+    if(firstStep)wzGo(firstStep);
+    wzMarkInvalid(fields);
+    return;
   }
   wzGo(from+1);
 }
@@ -2103,6 +2222,11 @@ function wzReset(){
   const c=document.getElementById('wzCountry');if(c)c.value='India';
   const pv=document.getElementById('wzPhotoPrev');if(pv)pv.innerHTML='';
   const ban=document.getElementById('wzAdmBanner');if(ban)ban.style.display='none';
+  if(typeof wzClearInvalid==='function')wzClearInvalid();
+  const gsame=document.getElementById('wzGAddrSame');if(gsame){gsame.checked=false;}
+  const gadd=document.getElementById('wzGAddress');if(gadd){gadd.readOnly=false;gadd.style.background='';}
+  const psame=document.getElementById('wzAddrPermSame');if(psame){psame.checked=false;}
+  ['wzAddr_','wzPAddr_'].forEach(px=>{ADDR_KEYS.forEach(k=>{const el=document.getElementById(px+k);if(el){el.value=(k==='country')?'India':'';el.readOnly=false;el.style.background='';}});});
   wzFillSelects();wzGo(1);
 }
 function wzEdit(id,admitMode){
@@ -2121,7 +2245,10 @@ function wzEdit(id,admitMode){
   sv('wzAdmDate',s.admissionDate||today());sv('wzCountry',s.country||'India');
   const at=document.getElementById('wzAdmType');if(at)at.value=s.admissionType||'resident';
   wzFillSelects();sv('wzCourse',s.cls);
-  sv('wzAddress',s.address);
+  if(s.addressParts){wzWriteAddr('wzAddr_',s.addressParts);}
+  else{wzWriteAddr('wzAddr_',{});const el=document.getElementById('wzAddr_area');if(el&&s.address)el.value=s.address;}
+  if(s.addressPartsPerm){wzWriteAddr('wzPAddr_',s.addressPartsPerm);}
+  else{wzWriteAddr('wzPAddr_',{});const el2=document.getElementById('wzPAddr_area');if(el2&&s.addressPerm)el2.value=s.addressPerm;}
   const oc=document.getElementById('wzOccupation');if(oc)oc.value=s.occupation||'business';
   const ew=s.eduWorldly||{},ed=s.eduDeeni||{};
   sv('wzEduWClass',ew.cls);sv('wzEduWSchool',ew.school);sv('wzEduWYear',ew.year);
@@ -2138,10 +2265,84 @@ function wzEdit(id,admitMode){
   if(sb){const lbl=admitMode?th2('✓ Admit / Enroll','✓ داخلہ مکمل کریں'):th2('✓ Save','✓ محفوظ کریں');sb.textContent=lbl;sb.setAttribute('data-ur',admitMode?'✓ داخلہ مکمل کریں':'✓ محفوظ کریں');sb.setAttribute('data-en',admitMode?'✓ Admit / Enroll':'✓ Save');}
   closeAllPopups();showView('form');wzGo(1);
 }
-function wzSave(){
+const WZ_REQUIRED=[
+  ['wzNameUr',null,()=>th2('Name (Urdu)','اردو میں نام'),1],
+  ['wzNameEn',null,()=>th2('Name (English)','انگریزی میں نام'),1],
+  ['wzFatherUr',null,()=>th2('Father name (Urdu)','اردو میں والد کا نام'),1],
+  ['wzFatherEn',null,()=>th2('Father name (English)','انگریزی میں والد کا نام'),1],
+  ['wzStudentAadhar',null,()=>th2('Student Aadhaar','طالبِ علم کا شناختی کارڈ'),1],
+  ['wzFatherAadhar2',null,()=>th2("Father's Aadhaar",'والد کا شناختی کارڈ'),1],
+  ['wzDob',null,()=>th2('Date of birth','تاریخِ پیدائش'),1],
+  ['wzCourse',null,()=>th2('Class / Course','درجہ / کورس'),2],
+  ['wzAddr_city',null,()=>th2('Current address — City/Village','موجودہ پتہ — شہر/گاؤں'),3],
+  ['wzAddr_dist',null,()=>th2('Current address — District','موجودہ پتہ — ضلع'),3],
+  ['wzPAddr_city',null,()=>th2('Permanent address — City/Village','مستقل پتہ — شہر/گاؤں'),3],
+  ['wzPAddr_dist',null,()=>th2('Permanent address — District','مستقل پتہ — ضلع'),3],
+  ['wzOccupation',null,()=>th2('Occupation (father/guardian)','مصروفیات'),3],
+  ['wzEduWClass',null,()=>th2('Worldly — class','دنیاوی — درجہ'),3],
+  ['wzEduWSchool',null,()=>th2('Worldly — school','دنیاوی — اسکول'),3],
+  ['wzEduWYear',null,()=>th2('Worldly — year passed','دنیاوی — سال'),3],
+  ['wzEduDClass',null,()=>th2('Deeni — class','دینی — درجہ'),3],
+  ['wzEduDSchool',null,()=>th2('Deeni — madrasa','دینی — مدرسہ'),3],
+  ['wzParents',null,()=>th2('Parents','والدین'),3],
+  ['wzGRelation',null,()=>th2('Relation to student','طالب علم سے رشتہ'),3],
+  ['wzGOccupation',null,()=>th2('Guardian occupation','سرپرست کی مصروفیت'),3],
+  ['wzGAddress',null,()=>th2('Guardian address','سرپرست کا پتہ'),3]
+];
+function wzMissing(uptoStep){
   const g=id=>{const el=document.getElementById(id);return el?el.value.trim():'';};
-  const nameEn=g('wzNameEn'),nameUr=g('wzNameUr'),name=nameEn||nameUr;
-  if(!name){toast(th2('Enter student name','طالب علم کا نام لکھیں'));wzGo(1);return;}
+  const fields=[];let firstStep=null;
+  WZ_REQUIRED.forEach(([id,alt,lbl,step])=>{
+    if(uptoStep&&step>uptoStep)return;
+    const v=g(id)||(alt?g(alt):'');
+    if(!v){fields.push([id,lbl(),step]);if(firstStep===null)firstStep=step;}
+  });
+  return {fields,firstStep};
+}
+function wzClearInvalid(){
+  document.querySelectorAll('#view-form .field.wz-err').forEach(f=>{
+    f.classList.remove('wz-err');const m=f.querySelector('.wz-errmsg');if(m)m.remove();
+  });
+}
+function wzMarkInvalid(fields){
+  wzClearInvalid();
+  fields.forEach(([id])=>{
+    const el=document.getElementById(id);if(!el)return;
+    const f=el.closest('.field');if(!f||f.querySelector('.wz-errmsg'))return;
+    f.classList.add('wz-err');
+    const m=document.createElement('div');m.className='wz-errmsg';
+    m.textContent=th2('This field is required','یہ خانہ لازمی ہے');
+    f.appendChild(m);
+  });
+}
+document.addEventListener('input',function(e){
+  const f=e.target&&e.target.closest&&e.target.closest('#view-form .field.wz-err');
+  if(f){f.classList.remove('wz-err');const m=f.querySelector('.wz-errmsg');if(m)m.remove();}
+},true);
+document.addEventListener('change',function(e){
+  const f=e.target&&e.target.closest&&e.target.closest('#view-form .field.wz-err');
+  if(f){f.classList.remove('wz-err');const m=f.querySelector('.wz-errmsg');if(m)m.remove();}
+},true);
+document.addEventListener('input',function(e){
+  if(e.target&&e.target.id&&e.target.id.indexOf('wzAddr_')===0){
+    const cbp=document.getElementById('wzAddrPermSame');
+    if(cbp&&cbp.checked)wzCopyCurToPerm();
+    const cbg=document.getElementById('wzGAddrSame');
+    if(cbg&&cbg.checked){const ga=document.getElementById('wzGAddress');if(ga)ga.value=addrToString(wzReadAddr('wzAddr_'));}
+  }
+});
+document.addEventListener('keydown',function(e){
+  if((e.ctrlKey||e.metaKey)&&(e.key==='s'||e.key==='S')){
+    const wz=document.getElementById('view-form');
+    if(currentView==='form'&&wz&&wz.style.display!=='none'){
+      e.preventDefault();
+      if(typeof wzSaveDraft==='function')wzSaveDraft();
+    }
+  }
+});
+function wzCollectRecord(){
+  const g=id=>{const el=document.getElementById(id);return el?el.value.trim():'';};
+  const nameEn=g('wzNameEn'),nameUr=g('wzNameUr'),name=nameEn||nameUr||'(نامعلوم)';
   const ex=_wz.editId?dbGetAll().find(x=>x.id===_wz.editId):null;
   const rec={
     id:_wz.editId||genId('s_'), status:(ex&&ex.status)||'active',
@@ -2154,22 +2355,66 @@ function wzSave(){
     motherTongue:g('wzMotherTongue'), mobile1:g('wzStudentPhone'), homePhone:g('wzHomePhone'), email:g('wzEmail'),
     photo:_wz.photo||(ex&&ex.photo)||'',
     admissionDate:g('wzAdmDate'), admissionType:g('wzAdmType'), country:g('wzCountry'), cls:g('wzCourse'),
-    address:g('wzAddress'), occupation:g('wzOccupation'), gender:(ex&&ex.gender)||'',
+    addressParts:wzReadAddr('wzAddr_'), addressPartsPerm:wzReadAddr('wzPAddr_'),
+    address:addrToString(wzReadAddr('wzAddr_')), addressPerm:addrToString(wzReadAddr('wzPAddr_')),
+    occupation:g('wzOccupation'), gender:(ex&&ex.gender)||'',
     eduWorldly:{cls:g('wzEduWClass'),school:g('wzEduWSchool'),year:g('wzEduWYear')},
     eduDeeni:{cls:g('wzEduDClass'),school:g('wzEduDSchool'),year:g('wzEduDYear')},
     maritalStatus:g('wzMarital'), parentsAlive:g('wzParents'), bloodGroup:g('wzBlood'), travel:g('wzTravel'),
     guardian:{relation:g('wzGRelation'),aadhar:g('wzGAadhar'),phone:g('wzGPhone'),motherTongue:g('wzGMotherTongue'),email:g('wzGEmail'),occupation:g('wzGOccupation'),address:g('wzGAddress')}
   };
-  if(ex){rec.createdAt=ex.createdAt;rec.testResult=ex.testResult;rec.testMarks=ex.testMarks;rec.entryType=ex.entryType;}
-  else rec.createdAt=Date.now();
+  if(ex){rec.createdAt=ex.createdAt;rec.testResult=ex.testResult;rec.testMarks=ex.testMarks;rec.entryType=ex.entryType;rec.stage=ex.stage||'registered';rec.admissionNo=ex.admissionNo||g('wzAdmNo');rec.admittedAt=ex.admittedAt;}
+  else {rec.createdAt=Date.now();rec.stage='registered';rec.admissionNo=g('wzAdmNo');}
+  return {rec,name,ex};
+}
+const ADDR_KEYS=['house','street','area','city','teh','dist','state','pin','country'];
+function wzReadAddr(prefix){const g=id=>{const el=document.getElementById(id);return el?el.value.trim():'';};const o={};ADDR_KEYS.forEach(k=>o[k]=g(prefix+k));return o;}
+function wzWriteAddr(prefix,o){o=o||{};ADDR_KEYS.forEach(k=>{const el=document.getElementById(prefix+k);if(el)el.value=(o[k]!=null&&o[k]!=='')?o[k]:(k==='country'?'India':'');});}
+function addrToString(o){
+  o=o||{};
+  const line=[o.house,o.street,o.area,o.city,o.teh,o.dist,o.state].filter(Boolean).join(', ');
+  return line+(o.pin?(' - '+o.pin):'')+(o.country&&o.country!=='India'?(', '+o.country):'');
+}
+function wzCopyCurToPerm(){const cur=wzReadAddr('wzAddr_');wzWriteAddr('wzPAddr_',cur);}
+function wzAddrPermSame(cb){
+  const box=document.getElementById('wzAddrPerm');
+  if(cb.checked){
+    wzCopyCurToPerm();
+    box.querySelectorAll('input').forEach(i=>{i.readOnly=true;i.style.background='#f0f2f8';});
+    box.querySelectorAll('.field.wz-err').forEach(f=>{f.classList.remove('wz-err');const m=f.querySelector('.wz-errmsg');if(m)m.remove();});
+  }else{
+    box.querySelectorAll('input').forEach(i=>{if(i.id!=='wzPAddr_country')i.value='';i.readOnly=false;i.style.background='';});
+  }
+}
+function wzGAddrSame(cb){
+  const ga=document.getElementById('wzGAddress');if(!ga)return;
+  if(cb.checked){
+    ga.value=addrToString(wzReadAddr('wzAddr_'));
+    ga.readOnly=true;ga.style.background='#f0f2f8';
+    const f=ga.closest('.field');if(f){f.classList.remove('wz-err');const m=f.querySelector('.wz-errmsg');if(m)m.remove();}
+  }else{
+    ga.value='';ga.readOnly=false;ga.style.background='';
+  }
+}
+function wzSaveDraft(){
+  const {rec,name}=wzCollectRecord();
+  dbSave(rec);
+  logActivity(th2('Progress saved: ','پیش رفت محفوظ: ')+name,'💾');
+  toast(th2('Progress saved ✓ — you can continue later','پیش رفت محفوظ ✓ — بعد میں مکمل کریں'));
+}
+function wzSave(){
+  const {fields,firstStep}=wzMissing(0);
+  if(fields.length){
+    if(firstStep)wzGo(firstStep);
+    wzMarkInvalid(fields);
+    return;
+  }
+  const {rec,name}=wzCollectRecord();
   if(_wz.admitMode){
-    if(!g('wzAdmNo')){document.getElementById('wzAdmNo').value='91'+yy(today())+'-'+pad6(nextSerial('adm'));}
+    if(!document.getElementById('wzAdmNo').value){document.getElementById('wzAdmNo').value='91'+yy(today())+'-'+pad6(nextSerial('adm'));}
     rec.admissionNo=document.getElementById('wzAdmNo').value;
     rec.stage='admitted'; rec.admittedAt=Date.now(); if(!rec.admissionDate)rec.admissionDate=today();
     if(!rec.status)rec.status='active';
-  }else{
-    rec.admissionNo=g('wzAdmNo');
-    rec.stage=ex?(ex.stage||'registered'):'registered';
   }
   dbSave(rec);
   logActivity((_wz.admitMode?th2('Admitted: ','داخل: '):th2('Saved: ','محفوظ: '))+name+(rec.admissionNo?(' ('+rec.admissionNo+')'):(rec.regNo?(' ('+rec.regNo+')'):'')),_wz.admitMode?'🎓':'✏️');
@@ -2181,6 +2426,32 @@ function wzSave(){
 function renderReg(){
   fillClassSelect('rgClass',document.getElementById('rgClass')?document.getElementById('rgClass').value:'');
   renderRegRecent();
+}
+function rgTypeChange(){
+  const ty=document.getElementById('rgType').value;
+  document.getElementById('rgFatherAadharWrap').style.display=ty==='father'?'':'none';
+  document.getElementById('rgSpecialWrap').style.display=ty==='special'?'':'none';
+  document.getElementById('rgContinueBtn').style.display=ty?'':'none';
+  document.getElementById('rgTypeErr').textContent='';
+  if(ty==='special'&&!document.getElementById('rgSpecialNo').value){
+    document.getElementById('rgSpecialNo').value='SP'+yy(today())+'-'+pad6(nextSpecial());
+  }
+  document.getElementById('rgFormBody').style.display='none';  // re-choose hides body until Continue
+}
+function nextSpecial(){
+  let max=0;dbGetAll().forEach(s=>{const m=/^SP\d\d-(\d+)$/.exec(s.specialNo||'');if(m)max=Math.max(max,+m[1]);});
+  return max+1;
+}
+function rgContinue(){
+  const ty=document.getElementById('rgType').value,err=document.getElementById('rgTypeErr');
+  err.textContent='';
+  if(!ty){err.textContent=th2('Select registration type','رجسٹریشن کی قسم منتخب کریں');return;}
+  if(ty==='father'){
+    const fa=document.getElementById('rgFatherAadhar').value.replace(/\s/g,'');
+    if(fa.length<12){err.textContent=th2("Enter father's 12-digit Aadhaar number",'والد کا 12 ہندسوں والا آدھار نمبر لکھیں');return;}
+  }
+  document.getElementById('rgFormBody').style.display='';
+  const fb=document.getElementById('rgFormBody');if(fb)fb.scrollIntoView({behavior:'smooth',block:'nearest'});
 }
 function rgCalcAge(){
   const dob=document.getElementById('rgDob').value,out=document.getElementById('rgAge');
@@ -2218,27 +2489,38 @@ function dobFromPicker(picker,txtId,ageFn){
   if(ageFn)window[ageFn]&&window[ageFn]();
 }
 function resetRegSimple(){
-  ['rgName','rgFather','rgStudentAadhar','rgGuardianAadhar','rgDob','rgAge','rgMobile','rgEmail','rgSchool','rgAddress'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
-  ['rgEducation','rgGender','rgClass'].forEach(id=>{const el=document.getElementById(id);if(el)el.selectedIndex=0;});
+  ['rgName','rgFather','rgStudentAadhar','rgFatherAadhar','rgSpecialNo','rgDob','rgAge','rgMobile','rgEmail','rgSchool','rgAddress'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  ['rgEducation','rgGender','rgClass','rgType'].forEach(id=>{const el=document.getElementById(id);if(el)el.selectedIndex=0;});
+  document.getElementById('rgFatherAadharWrap').style.display='none';
+  document.getElementById('rgSpecialWrap').style.display='none';
+  document.getElementById('rgContinueBtn').style.display='none';
+  document.getElementById('rgTypeErr').textContent='';
+  document.getElementById('rgFormBody').style.display='none';
 }
 function saveRegSimple(){
   const g=id=>{const el=document.getElementById(id);return el?el.value.trim():'';};
+  const ty=g('rgType');
+  if(!ty){toast(th2('Select registration type','رجسٹریشن کی قسم منتخب کریں'));return;}
+  const fatherAadhar=g('rgFatherAadhar').replace(/\s/g,'');
+  if(ty==='father'&&fatherAadhar.length<12){toast(th2("Father's Aadhaar number is required",'والد کا آدھار نمبر لازمی ہے'));return;}
   const name=g('rgName');
   if(!name){toast(th2('Enter student name','طالبِ علم کا نام لکھیں'));return;}
   const dup=findDuplicateStudent(name,g('rgFather'),g('rgMobile'),null);
   if(dup){showDuplicateAlert(dup);return;}
   const rec={
     id:genId('s_'), stage:'registered', createdAt:Date.now(), status:'active',
+    entryType:ty, specialNo:ty==='special'?g('rgSpecialNo'):'',
     regNo:'IN'+yy(today())+'-'+pad6(nextSerial('reg')),
     name:name, nameEn:name, fatherName:g('rgFather'), fatherNameEn:g('rgFather'),
-    studentAadhar:g('rgStudentAadhar'), fatherAadhar:g('rgGuardianAadhar'),
+    studentAadhar:g('rgStudentAadhar'), fatherAadhar:ty==='father'?fatherAadhar:'',
     dob:g('rgDob'), age:g('rgAge'), mobile1:g('rgMobile'), email:g('rgEmail'),
     eduWorldly:{cls:g('rgEducation'),school:g('rgSchool'),year:''},
     gender:g('rgGender'), cls:g('rgClass'), address:g('rgAddress'),
-    guardian:{aadhar:g('rgGuardianAadhar')}
+    guardian:{aadhar:ty==='father'?fatherAadhar:''}
   };
   dbSave(rec);
-  logActivity(th2('New registration: ','نیا رجسٹریشن: ')+name+' ('+rec.regNo+')','📝');
+  const tag=ty==='special'?rec.specialNo:rec.regNo;
+  logActivity(th2('New registration: ','نیا رجسٹریشن: ')+name+' ('+tag+')','📝');
   toast(th2('Registered ✓ → Registration Test','رجسٹرڈ ✓ → رجسٹریشن ٹیسٹ'));
   resetRegSimple();renderRegRecent();
 }
@@ -2481,15 +2763,13 @@ function resetReg(){
 }
 function findDuplicateStudent(name,father,mobile,excludeId){
   const norm=v=>(v||'').trim().toLowerCase().replace(/\s+/g,' ');
-  const nm=norm(name),fa=norm(father),mo=(mobile||'').replace(/\D/g,'');
-  if(!nm)return null;
+  const nm=norm(name),fa=norm(father);
+  if(!nm||!fa)return null; // need both name and father to call it a duplicate
   return dbGetAll().find(s=>{
     if(excludeId&&s.id===excludeId)return false;
     if(s.stage==='rejected')return false;
-    const sn=norm(s.name),sf=norm(s.fatherName),sm=(s.mobile1||'').replace(/\D/g,'');
-    const nameFather=sn===nm&&fa!==''&&sf===fa;
-    const mobileMatch=mo.length>=10&&sm===mo;
-    return nameFather||mobileMatch;
+    const sn=norm(s.name),sf=norm(s.fatherName);
+    return sn===nm&&sf===fa;   // same student = same name AND same father
   })||null;
 }
 function showDuplicateAlert(s){
@@ -2601,7 +2881,15 @@ function saveTestResult(id,result,win){
 function approveReg(id){
   const s=dbGetAll().find(x=>x.id===id);if(!s)return;
   if(s.testResult!=='pass'){toast(t('needTestPass'));return;}
-  wzEdit(id,true);   // open full admission form (all details), Save = admit
+  s.stage='admitted';
+  s.admittedAt=Date.now();
+  if(!s.admissionNo)s.admissionNo='91'+yy(today())+'-'+pad6(nextSerial('adm'));
+  if(!s.admissionDate)s.admissionDate=today();
+  if(!s.status)s.status='active';
+  dbSave(s);
+  logActivity(th2('Admitted: ','داخل: ')+(s.name||'')+(s.admissionNo?(' ('+s.admissionNo+')'):''),'🎓');
+  toast(th2('Admitted ✓ — in Students list. Fill details via Edit.','داخلہ ✓ — طلباء لسٹ میں۔ تفصیلات Edit سے بھریں۔'));
+  showView('list');
 }
 /* fresh blank admission opened directly from the sidebar menu */
 function newAdmission(){
@@ -3925,7 +4213,7 @@ function feeFind(){
 }
 function feeShowStudent(id){
   const s=dbGetAll().find(x=>x.id===id);if(!s)return;_feeStud=id;
-  const fee=feeFor(s.cls);const others=otherHeads();
+  const fee=feeFor(s.cls,isNewStudent(s));const others=otherHeads();
   const exemptRow=`<label class="pr-row" style="justify-content:flex-start;gap:8px;margin-top:8px"><input type="checkbox" ${s.feeExempt?'checked':''} onchange="feeToggleExempt('${id}',this.checked)"> <span>${th2('Fee exempt (free student)','فیس معاف ہے (مفت طالب علم)')}</span></label>`;
   const head=`<div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:6px">
       <div><b style="font-size:16px">${esc(s.name)}</b><div style="color:var(--muted);font-size:13px">${esc(s.cls||'—')} · ${esc(s.admissionNo||'')}</div></div>
@@ -3937,30 +4225,50 @@ function feeShowStudent(id){
       ${exemptRow}${feeHistoryHtml(id)}</div>`;
     return;
   }
-  if(!fee&&!others.length){document.getElementById('feeCollectResult').innerHTML=`<div class="pr-card" style="max-width:640px">${head}<div style="color:#c0392b;margin-top:8px">${th2('Set fees in Settings → Fee settings first.','پہلے Settings → فیس سیٹنگ میں فیس مقرر کریں۔')}</div>${exemptRow}</div>`;return;}
+  if(!fee&&!others.length&&getAutoDues()){document.getElementById('feeCollectResult').innerHTML=`<div class="pr-card" style="max-width:640px">${head}<div style="color:#c0392b;margin-top:8px">${th2('Set fees in Settings → Fee settings first.','پہلے Settings → فیس سیٹنگ میں فیس مقرر کریں۔')}</div>${exemptRow}</div>`;return;}
   const {owed,unpaid,duesAmt}=studentDues(s);const pmap=studentPayMap(id);
   const rows=owed.slice().reverse().map(m=>{
     const p=pmap[m];
+    const mAmt=monthlyFeeForMonth(s,m);
     let status,action;
-    if(p){status=p.waived?`<span style="color:#d97706;font-weight:600">${th2('Waived','معاف')}</span>`:`<span style="color:#16a34a;font-weight:600">${th2('Paid','ادا')}</span>`;action='—';}
-    else{status=`<span style="color:#c0392b;font-weight:600">${th2('Pending','باقی')}</span>`;action=`<input type="checkbox" class="fee-chk" value="${m}" onchange="feeCalcTotal()"> <button class="chip-x" title="${th2('Waive','معاف')}" style="color:#d97706" onclick="feeWaiveMonth('${m}')">معاف</button>`;}
+    if(p){status=p.waived?`<span style="color:#d97706;font-weight:600">${th2('Waived','معاف')}</span>`:`<span style="color:#16a34a;font-weight:600">${th2('Paid','ادا')} ₹${p.amount}</span>`;action='—';}
+    else{status=`<span style="color:#c0392b;font-weight:600">${th2('Pending','باقی')} ₹${mAmt}</span>`;action=`<input type="checkbox" class="fee-chk" value="${m}" data-amt="${mAmt}" onchange="feeCalcTotal()"> <button class="chip-x" title="${th2('Waive','معاف')}" style="color:#d97706" onclick="feeWaiveMonth('${m}')">معاف</button>`;}
     return `<tr><td>${monthLabel(m)}</td><td>${status}</td><td style="text-align:center">${action}</td></tr>`;
   }).join('');
+  const overrideHtml=`<div style="display:flex;align-items:center;gap:8px;margin:10px 0;flex-wrap:wrap;padding:8px 10px;background:var(--green-soft);border-radius:8px">
+    <span style="font-size:13px;font-weight:600">${th2('Amount per month (override)','فی مہینہ رقم (تبدیل کریں)')}</span>
+    <span>₹<input type="number" id="feeMonthlyOverride" placeholder="${th2('auto','خودکار')}" style="max-width:100px" oninput="feeCalcTotal()"></span>
+    <span style="font-size:11.5px;color:var(--muted)">${th2('leave blank = use set fee','خالی = مقررہ فیس')}</span>
+  </div>`;
   const otherHtml=others.length?`
     <div style="font-weight:700;font-size:13px;margin:12px 0 4px">${th2('Other charges (optional)','اضافی مدات (اختیاری)')}</div>
-    ${others.map(h=>`<label class="pr-row" style="justify-content:flex-start;gap:8px"><input type="checkbox" class="fee-other" data-hid="${h.id}" data-name="${esc(h.name)}" onchange="feeCalcTotal()"> <span style="min-width:120px">${esc(lang==='ur'?h.name:(h.nameEn||h.name))}</span> ₹<input type="number" class="fee-other-amt" data-hid="${h.id}" value="${headAmt(h,s.cls)}" style="max-width:90px" onchange="feeCalcTotal()"></label>`).join('')}`:'';
-  document.getElementById('feeCollectResult').innerHTML=`
-    <div class="pr-card" style="max-width:640px">
-      ${head}
+    ${others.map(h=>`<label class="pr-row" style="justify-content:flex-start;gap:8px"><input type="checkbox" class="fee-other" data-hid="${h.id}" data-name="${esc(h.name)}" onchange="feeCalcTotal()"> <span style="min-width:120px">${esc(lang==='ur'?h.name:(h.nameEn||h.name))}</span> ₹<input type="number" class="fee-other-amt" data-hid="${h.id}" value="${headAmt(h,s.cls,isNewStudent(s))}" style="max-width:90px" onchange="feeCalcTotal()"></label>`).join('')}`:'';
+  const auto=getAutoDues();
+  const freshHtml=`<div style="margin:10px 0;padding:12px;border:1px solid var(--line);border-radius:10px;background:var(--green-soft)">
+      <div style="font-weight:700;font-size:13.5px;margin-bottom:8px">✍️ ${th2('Fresh entry — record a payment','فریش انٹری — فیس درج کریں')}</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:end">
+        <div class="field" style="margin:0"><label style="font-size:12px">${th2('Month','مہینہ')}</label><input type="month" id="feeFreshMonth" value="${ym(new Date())}" style="max-width:170px"></div>
+        <div class="field" style="margin:0"><label style="font-size:12px">${th2('Amount ₹','رقم ₹')}</label><input type="number" id="feeFreshAmt" placeholder="₹" style="max-width:120px"></div>
+        <button class="btn btn-primary btn-sm" onclick="feeAddFresh()">${th2('＋ Record + Receipt','＋ درج کریں + رسید')}</button>
+      </div>
+      <div style="font-size:11.5px;color:var(--muted);margin-top:6px">${th2('Enter any month and amount — one receipt. Repeat for each student.','کوئی بھی مہینہ اور رقم لکھیں — ایک رسید۔ ہر طالبِ علم کے لیے دہرائیں۔')}</div>
+    </div>`;
+  const autoBlock=auto?`
       <div style="margin:8px 0;padding:8px 10px;border-radius:8px;background:${duesAmt>0?'#fbe6e3':'#e4f5ea'};font-weight:600;color:${duesAmt>0?'#c0392b':'#16a34a'}">
         ${th2('Total dues','کل بقایا')}: ₹${duesAmt} (${unpaid.length} ${th2('months','مہینے')})
       </div>
       <div class="table-wrap" style="max-height:260px;overflow:auto"><table><thead><tr><th>${th2('Month','مہینہ')}</th><th>${th2('Status','حالت')}</th><th style="text-align:center">${th2('Pay / Waive','جمع / معاف')}</th></tr></thead><tbody>${rows}</tbody></table></div>
       ${otherHtml}
+      ${overrideHtml}
       <div style="display:flex;justify-content:space-between;align-items:center;margin-top:12px;flex-wrap:wrap;gap:8px">
         <div style="font-weight:700">${th2('Selected','منتخب')}: ₹<span id="feeTotal">0</span></div>
         <button class="btn btn-primary" onclick="feeCollectNow()">${th2('Collect + Receipt','جمع کریں + رسید')}</button>
-      </div>
+      </div>`:'';
+  document.getElementById('feeCollectResult').innerHTML=`
+    <div class="pr-card" style="max-width:640px">
+      ${head}
+      ${freshHtml}
+      ${autoBlock}
       ${exemptRow}
       ${feeHistoryHtml(id)}
     </div>`;
@@ -3995,10 +4303,33 @@ function feeDeleteReceipt(sid,rcpt){
   const keep=getFeePayments().filter(p=>!(p.sid===sid&&(String(p.receiptNo)===String(rcpt)||('W'+p.id)===String(rcpt))));
   saveFeePayments(keep);toast(t('deleted'));feeShowStudent(sid);
 }
+function feeMonthAmt(s,m){
+  const ov=document.getElementById('feeMonthlyOverride');
+  if(ov&&String(ov.value).trim()!=='')return Number(ov.value||0);
+  return monthlyFeeForMonth(s,m);
+}
+function feeAddFresh(){
+  const s=dbGetAll().find(x=>x.id===_feeStud);if(!s)return;
+  const m=document.getElementById('feeFreshMonth').value;
+  const amt=Number(document.getElementById('feeFreshAmt').value||0);
+  if(!m){toast(th2('Pick a month','مہینہ منتخب کریں'));return;}
+  if(!amt){toast(th2('Enter amount','رقم لکھیں'));return;}
+  let pays=getFeePayments();
+  const existing=pays.find(p=>p.sid===s.id&&p.month===m&&!p.waived);
+  if(existing&&!confirm(th2('Already recorded for this month — replace it?','اِس مہینے کی انٹری پہلے سے ہے — بدلیں؟')))return;
+  pays=pays.filter(p=>!(p.sid===s.id&&p.month===m));
+  const rcpt=nextReceiptNo();
+  pays.push({id:genId('fp_'),sid:s.id,kind:'monthly',month:m,amount:amt,date:today(),receiptNo:rcpt});
+  saveFeePayments(pays);
+  logActivity(th2('Fee recorded: ','فیس درج: ')+(s.name||'')+' — ₹'+amt,'💰');
+  toast(th2('Recorded ✓','درج ہو گیا ✓'));
+  feeReceipt(s,[{label:monthLabel(m),amount:amt}],rcpt,today());
+  feeShowStudent(s.id);
+}
 function feeCalcTotal(){
   const s=dbGetAll().find(x=>x.id===_feeStud);if(!s)return;
-  const nm=document.querySelectorAll('.fee-chk:checked').length;
-  let tot=nm*monthlyFeeFor(s.cls);
+  let tot=0;
+  document.querySelectorAll('.fee-chk:checked').forEach(c=>{tot+=feeMonthAmt(s,c.value);});
   document.querySelectorAll('.fee-other:checked').forEach(c=>{
     const amt=document.querySelector('.fee-other-amt[data-hid="'+c.getAttribute('data-hid')+'"]');
     tot+=Number((amt&&amt.value)||0);
@@ -4013,15 +4344,15 @@ function feeCollectNow(){
     return {headId:hid,name:c.getAttribute('data-name'),amount:Number((amt&&amt.value)||0)};
   });
   if(!months.length&&!others.length){toast(th2('Select something','کچھ منتخب کریں'));return;}
-  const mfee=monthlyFeeFor(s.cls);const date=today();const rcpt=nextReceiptNo();const pays=getFeePayments();
+  const date=today();const rcpt=nextReceiptNo();const pays=getFeePayments();
   months.sort();
-  months.forEach(m=>pays.push({id:genId('fp_'),sid:s.id,kind:'monthly',month:m,amount:mfee,date,receiptNo:rcpt}));
-  others.forEach(o=>pays.push({id:genId('fp_'),sid:s.id,kind:'other',headId:o.headId,headName:o.name,amount:o.amount,date,receiptNo:rcpt}));
+  const items=[];
+  months.forEach(m=>{const amt=feeMonthAmt(s,m);pays.push({id:genId('fp_'),sid:s.id,kind:'monthly',month:m,amount:amt,date,receiptNo:rcpt});items.push({label:monthLabel(m),amount:amt});});
+  others.forEach(o=>{pays.push({id:genId('fp_'),sid:s.id,kind:'other',headId:o.headId,headName:o.name,amount:o.amount,date,receiptNo:rcpt});items.push({label:o.name,amount:Number(o.amount||0)});});
   saveFeePayments(pays);
-  const _ftot=months.length*mfee+others.reduce((x,o)=>x+Number(o.amount||0),0);
+  const _ftot=items.reduce((x,it)=>x+Number(it.amount||0),0);
   logActivity(th2('Fee collected: ','فیس جمع: ')+(s.name||'')+' — ₹'+_ftot,'💰');
   toast(th2('Collected ✓','جمع ہو گیا ✓'));
-  const items=months.map(m=>({label:monthLabel(m),amount:mfee})).concat(others.map(o=>({label:o.name,amount:Number(o.amount||0)})));
   feeReceipt(s,items,rcpt,date);
   feeShowStudent(s.id);
 }
@@ -4072,11 +4403,11 @@ function feeRegData(){
   let studs=dbGetAll().filter(s=>s.stage==='admitted'&&activeStatusValues().includes(s.status)&&!s.feeExempt);
   if(cls)studs=studs.filter(s=>s.cls===cls);
   studs.sort((a,b)=>(a.cls||'').localeCompare(b.cls||'')||(a.name||'').localeCompare(b.name||''));
-  const pays=getFeePayments();let collected=0,paidCount=0;
+  const pays=getFeePayments();let collected=0,paidCount=0;const auto=getAutoDues();
   const rows=studs.map(s=>{
     const p=pays.find(x=>x.sid===s.id&&x.month===m);
     if(p){collected+=Number(p.amount||0);paidCount++;}
-    return {s,paid:!!p,amt:p?p.amount:feeFor(s.cls)};
+    return {s,paid:!!p,amt:p?p.amount:(auto?monthlyFeeForMonth(s,m):null)};
   });
   return {m,rows,collected,paidCount,pending:studs.length-paidCount};
 }
@@ -4086,8 +4417,8 @@ function feeRenderReg(){
   if(!d.rows.length){el.innerHTML=`<div class="set-empty">${t('noData')}</div>`;return;}
   const body=d.rows.map((r,i)=>`<tr onclick="feeTab('collect');feeShowStudent('${r.s.id}')" style="cursor:pointer">
     <td>${i+1}</td><td>${esc(r.s.name)}</td><td>${esc(r.s.cls||'—')}</td>
-    <td>${r.paid?`<span style="color:#16a34a;font-weight:600">${th2('Paid','ادا')}</span>`:`<span style="color:#c0392b;font-weight:600">${th2('Pending','باقی')}</span>`}</td>
-    <td>₹${r.amt}</td></tr>`).join('');
+    <td>${r.paid?`<span style="color:#16a34a;font-weight:600">${th2('Paid','ادا')}</span>`:(r.amt==null?`<span style="color:var(--muted)">${th2('Not recorded','درج نہیں')}</span>`:`<span style="color:#c0392b;font-weight:600">${th2('Pending','باقی')}</span>`)}</td>
+    <td>${r.amt==null?'—':'₹'+r.amt}</td></tr>`).join('');
   el.innerHTML=`<div style="display:flex;gap:14px;flex-wrap:wrap;margin-bottom:8px;font-size:14px">
       <span>${th2('Collected','جمع شدہ')}: <b style="color:#16a34a">₹${d.collected}</b></span>
       <span>${th2('Paid','ادا')}: <b>${d.paidCount}</b></span>
@@ -4106,21 +4437,68 @@ function feeExportReg(fmt){
   const data=d.rows.map(r=>[r.s.name,r.s.cls||'',r.paid?th2('Paid','ادا'):th2('Pending','باقی'),r.amt]);
   if(fmt==='csv')downloadCSVRows('fee-register-'+d.m,cols,data);else printTable(th2('Monthly Register','ماہانہ رجسٹر')+' — '+monthLabel(d.m),cols,data);
 }
+function setAutoDues(v){const cfg=getFeeConfig();cfg.autoDues=!!v;saveFeeConfig(cfg);toast(v?th2('Auto dues ON','خودکار بقایا آن'):th2('Auto dues OFF','خودکار بقایا بند'));if(currentView==='fees')renderFees();}
 function renderFeeSettings(){
-  const list=document.getElementById('feeHeadList');if(!list)return;
+  const ad=document.getElementById('feeAutoDues');if(ad)ad.checked=getAutoDues();
+  const list=document.getElementById('feeHeadList');
+  if(list){
   const heads=getFeeConfig().heads;
-  list.innerHTML=heads.length?heads.map(h=>`<div class="set-add" style="margin-bottom:6px;align-items:center">
-    <span style="min-width:150px;font-size:13px">${esc(lang==='ur'?h.name:(h.nameEn||h.name))} <i style="color:var(--muted);font-size:11px">· ${h.type==='monthly'?th2('monthly','ماہانہ'):th2('one-time','ایک بار')}</i></span>
-    <span>₹<input type="number" style="max-width:100px" value="${esc(String(h.amount||0))}" onchange="saveHeadAmt('${h.id}',this.value)"></span>
-    <button class="chip-x" onclick="delFeeHead('${h.id}')">✕</button></div>`).join(''):`<div class="set-empty">${t('noData')}</div>`;
+  list.innerHTML=heads.length?heads.map(h=>`<div class="fee-head-row">
+    <div><span class="lbl">${th2('Head name','مد کا نام')}</span><input type="text" value="${esc(h.name||'')}" onchange="saveHeadField('${h.id}','name',this.value)"></div>
+    <div><span class="lbl">${th2('Type','قسم')}</span><select onchange="saveHeadField('${h.id}','type',this.value)">
+      <option value="monthly"${h.type==='monthly'?' selected':''}>${th2('Monthly','ماہانہ')}</option>
+      <option value="onetime"${h.type!=='monthly'?' selected':''}>${th2('One-time / Exam','ایک بار / امتحان')}</option>
+    </select></div>
+    <div><span class="lbl">${th2('Old ₹','پرانے ₹')}</span><input type="number" value="${esc(String(h.amount||0))}" onchange="saveHeadField('${h.id}','amount',this.value)"></div>
+    <div><span class="lbl">${th2('New ₹','نئے ₹')}</span><input type="number" value="${h.amountNew!=null&&h.amountNew!==''?esc(String(h.amountNew)):''}" placeholder="${th2('same','وہی')}" onchange="saveHeadField('${h.id}','amountNew',this.value)"></div>
+    <button class="chip-x fhr-x" onclick="delFeeHead('${h.id}')" title="${th2('Remove','ہٹائیں')}">✕</button>
+  </div>`).join(''):`<div class="set-empty">${th2('No fee heads yet — add one above.','ابھی کوئی مد نہیں — اوپر سے شامل کریں۔')}</div>`;
+  }
+  renderFeeSchedule();
+}
+function renderFeeSchedule(){
+  const box=document.getElementById('feeSchList');if(!box)return;
+  const sch=getFeeSchedule();
+  box.innerHTML=sch.length?sch.map((e,i)=>`<div style="display:flex;align-items:center;gap:10px;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:#fff;margin-bottom:6px;max-width:420px">
+    <span style="font-weight:600">${th2('From','سے')} ${esc(monthLabel(e.from))}</span>
+    <span style="margin-inline-start:auto">₹${esc(String(e.amount||0))} / ${th2('month','ماہ')}</span>
+    <button class="chip-x" onclick="delFeeSchedule(${i})">✕</button></div>`).join(''):`<div class="set-empty">${th2('No changes set — using the Monthly heads total.','کوئی تبدیلی نہیں — «ماہانہ» مدات کا مجموعہ لگے گا۔')}</div>`;
+}
+function addFeeSchedule(){
+  const from=document.getElementById('feeSchFrom').value;
+  const amt=Number(document.getElementById('feeSchAmt').value||0);
+  if(!from){toast(th2('Pick a month','مہینہ منتخب کریں'));return;}
+  const cfg=getFeeConfig();cfg.schedule=Array.isArray(cfg.schedule)?cfg.schedule:[];
+  cfg.schedule=cfg.schedule.filter(e=>e.from!==from);
+  cfg.schedule.push({from,amount:amt});
+  cfg.schedule.sort((a,b)=>String(a.from).localeCompare(String(b.from)));
+  saveFeeConfig(cfg);
+  document.getElementById('feeSchFrom').value='';document.getElementById('feeSchAmt').value='';
+  toast(th2('Added ✓','شامل ✓'));renderFeeSchedule();
+}
+function delFeeSchedule(i){
+  const cfg=getFeeConfig();if(!Array.isArray(cfg.schedule))return;
+  const sch=getFeeSchedule();const e=sch[i];if(!e)return;
+  cfg.schedule=(cfg.schedule||[]).filter(x=>x.from!==e.from);
+  saveFeeConfig(cfg);toast(t('deleted'));renderFeeSchedule();
+}
+function saveHeadField(id,field,val){
+  const cfg=getFeeConfig();const h=cfg.heads.find(x=>x.id===id);if(!h)return;
+  if(field==='amount')h.amount=Number(val||0);
+  else if(field==='amountNew')h.amountNew=(String(val).trim()===''?'':Number(val||0));
+  else if(field==='name'){h.name=val.trim();h.nameEn=val.trim();}
+  else h[field]=val;
+  saveFeeConfig(cfg);toast(th2('Saved ✓','محفوظ ✓'));
 }
 function addFeeHead(){
   const name=(document.getElementById('feeHeadName').value||'').trim();
   const type=document.getElementById('feeHeadType').value;
   const amt=Number(document.getElementById('feeHeadAmt').value||0);
+  const rawNew=document.getElementById('feeHeadAmtNew').value;
+  const amountNew=String(rawNew).trim()===''?'':Number(rawNew||0);
   if(!name){toast(th2('Enter a name','نام لکھیں'));return;}
-  const cfg=getFeeConfig();cfg.heads.push({id:genId('fh_'),name,nameEn:name,type,amount:amt,classAmount:{}});saveFeeConfig(cfg);
-  document.getElementById('feeHeadName').value='';document.getElementById('feeHeadAmt').value='';
+  const cfg=getFeeConfig();cfg.heads.push({id:genId('fh_'),name,nameEn:name,type,amount:amt,amountNew,classAmount:{}});saveFeeConfig(cfg);
+  ['feeHeadName','feeHeadAmt','feeHeadAmtNew'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
   toast(th2('Added ✓','شامل ✓'));renderFeeSettings();
 }
 function saveHeadAmt(id,val){const cfg=getFeeConfig();const h=cfg.heads.find(x=>x.id===id);if(h){h.amount=Number(val||0);saveFeeConfig(cfg);toast(th2('Saved ✓','محفوظ ✓'));}}
