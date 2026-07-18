@@ -640,7 +640,8 @@
       <div id="view-reg" style="display:none">
         <div class="section">
           <div class="section-head"><div class="n">+</div><h3 data-ur="نیا رجسٹریشن" data-en="New Registration">نیا رجسٹریشن</h3>
-            <button class="btn btn-ghost btn-sm no-drag" onclick="downloadAdmissionForm()" style="margin-inline-start:auto" data-ur="⬇ داخلہ فارم ڈاؤن لوڈ" data-en="⬇ Download Admission Form">⬇ داخلہ فارم</button></div>
+            <button class="btn btn-ghost btn-sm no-drag" onclick="downloadAdmissionForm()" style="margin-inline-start:auto" data-ur="⬇ داخلہ فارم ڈاؤن لوڈ" data-en="⬇ Download Admission Form">⬇ داخلہ فارم</button>
+            <button class="btn btn-primary btn-sm no-drag" onclick="showView('regtest')" title="Registration Test" data-ur="رجسٹریشن ٹیسٹ →" data-en="Registration Test →">رجسٹریشن ٹیسٹ →</button></div>
 
           <div style="padding:4px 20px 8px;max-width:560px">
             <div class="field"><label data-ur="رجسٹریشن کی قسم *" data-en="Registration type *">رجسٹریشن کی قسم *</label>
@@ -712,6 +713,7 @@
               <button class="btn btn-ghost btn-sm" onclick="openPubFieldsCfg()" data-ur="⚙️ فارم فیلڈز" data-en="⚙️ Form fields">⚙️ فارم فیلڈز</button>
               <button class="btn btn-ghost btn-sm" onclick="renderOnlineRegs()" data-ur="🔄 تازہ کریں" data-en="🔄 Refresh">🔄 تازہ کریں</button>
               <span class="count-chip" id="onlineRegsCount"></span>
+              <button class="btn btn-primary btn-sm" onclick="showView('regtest')" title="Registration Test" data-ur="رجسٹریشن ٹیسٹ →" data-en="Registration Test →">رجسٹریشن ٹیسٹ →</button>
             </div></div>
           <div style="padding:12px 14px 0"><input type="text" id="onlineRegSearch" oninput="renderOnlineRegs()" data-ur-ph="🔍 رجسٹریشن نمبر، نام یا موبائل سے تلاش کریں" data-en-ph="🔍 Search by registration no, name or mobile" style="width:100%"></div>
           <div style="padding:14px" id="onlineRegsBody"></div>
@@ -721,7 +723,8 @@
       <!-- ========= ③ REGISTRATION TEST ========= -->
       <div id="view-regtest" style="display:none">
         <div class="section" style="margin-bottom:16px">
-          <div class="section-head"><div class="n">③</div><h3 data-ur="رجسٹریشن ٹیسٹ" data-en="Registration Test">رجسٹریشن ٹیسٹ</h3></div>
+          <div class="section-head"><div class="n">③</div><h3 data-ur="رجسٹریشن ٹیسٹ" data-en="Registration Test">رجسٹریشن ٹیسٹ</h3>
+            <button class="btn btn-primary btn-sm no-drag" style="margin-inline-start:auto" onclick="showView('admit')" title="Admission / Enrollment" data-ur="داخلہ / انرولمنٹ →" data-en="Admission / Enrollment →">داخلہ / انرولمنٹ →</button></div>
           <div class="field" style="max-width:560px;padding:0 20px 16px">
             <label data-ur="رجسٹریشن نمبر / نام" data-en="Registration No / Name">رجسٹریشن نمبر / نام</label>
             <div style="display:flex;gap:8px">
@@ -830,13 +833,14 @@
                 <div class="field full" style="margin-bottom:2px"><b style="color:var(--green-2);font-size:13px" data-ur="موجودہ پتہ" data-en="Current address">موجودہ پتہ</b> <span class="req-star">*</span></div>
                 <div class="field"><label data-ur="مکان نمبر" data-en="House #">مکان نمبر</label><input type="text" id="wzAddr_house"></div>
                 <div class="field"><label data-ur="گلی نمبر" data-en="Street #">گلی نمبر</label><input type="text" id="wzAddr_street"></div>
+                <div class="field"><label data-ur="وارڈ نمبر" data-en="Ward No">وارڈ نمبر</label><input type="text" id="wzAddr_ward"></div>
                 <div class="field"><label data-ur="محلہ / علاقہ" data-en="Mohalla / Area">محلہ / علاقہ</label><input type="text" id="wzAddr_area"></div>
                 <div class="field"><label data-ur="شہر / گاؤں" data-en="City / Village">شہر / گاؤں<span class="req-star"> *</span></label><input type="text" id="wzAddr_city"></div>
                 <div class="field"><label data-ur="تحصیل" data-en="Tehsil">تحصیل</label><input type="text" id="wzAddr_teh"></div>
                 <div class="field"><label data-ur="ضلع" data-en="District">ضلع<span class="req-star"> *</span></label><input type="text" id="wzAddr_dist"></div>
-                <div class="field"><label data-ur="ریاست / صوبہ" data-en="State / Province">ریاست</label><input type="text" id="wzAddr_state"></div>
-                <div class="field"><label data-ur="پن کوڈ" data-en="Pincode">پن کوڈ</label><input type="text" id="wzAddr_pin" inputmode="numeric" style="direction:ltr;text-align:start"></div>
-                <div class="field"><label data-ur="ملک" data-en="Country">ملک</label><input type="text" id="wzAddr_country" value="India"></div>
+                <div class="field"><label data-ur="ریاست / صوبہ" data-en="State / Province">ریاست<span class="req-star"> *</span></label><input type="text" id="wzAddr_state"></div>
+                <div class="field"><label data-ur="پن کوڈ" data-en="Pincode">پن کوڈ<span class="req-star"> *</span></label><input type="text" id="wzAddr_pin" inputmode="numeric" style="direction:ltr;text-align:start"></div>
+                <div class="field"><label data-ur="ملک" data-en="Country">ملک<span class="req-star"> *</span></label><input type="text" id="wzAddr_country" value="India"></div>
               </div>
               <div class="field full" style="margin-top:6px">
                 <label style="display:flex;align-items:center;gap:7px;font-size:13px;font-weight:600;cursor:pointer;color:var(--green-2)">
@@ -847,13 +851,14 @@
                 <div class="field full" style="margin-bottom:2px"><b style="color:var(--green-2);font-size:13px" data-ur="مستقل پتہ" data-en="Permanent address">مستقل پتہ</b> <span class="req-star">*</span></div>
                 <div class="field"><label data-ur="مکان نمبر" data-en="House #">مکان نمبر</label><input type="text" id="wzPAddr_house"></div>
                 <div class="field"><label data-ur="گلی نمبر" data-en="Street #">گلی نمبر</label><input type="text" id="wzPAddr_street"></div>
+                <div class="field"><label data-ur="وارڈ نمبر" data-en="Ward No">وارڈ نمبر</label><input type="text" id="wzPAddr_ward"></div>
                 <div class="field"><label data-ur="محلہ / علاقہ" data-en="Mohalla / Area">محلہ / علاقہ</label><input type="text" id="wzPAddr_area"></div>
                 <div class="field"><label data-ur="شہر / گاؤں" data-en="City / Village">شہر / گاؤں<span class="req-star"> *</span></label><input type="text" id="wzPAddr_city"></div>
                 <div class="field"><label data-ur="تحصیل" data-en="Tehsil">تحصیل</label><input type="text" id="wzPAddr_teh"></div>
                 <div class="field"><label data-ur="ضلع" data-en="District">ضلع<span class="req-star"> *</span></label><input type="text" id="wzPAddr_dist"></div>
-                <div class="field"><label data-ur="ریاست / صوبہ" data-en="State / Province">ریاست</label><input type="text" id="wzPAddr_state"></div>
-                <div class="field"><label data-ur="پن کوڈ" data-en="Pincode">پن کوڈ</label><input type="text" id="wzPAddr_pin" inputmode="numeric" style="direction:ltr;text-align:start"></div>
-                <div class="field"><label data-ur="ملک" data-en="Country">ملک</label><input type="text" id="wzPAddr_country" value="India"></div>
+                <div class="field"><label data-ur="ریاست / صوبہ" data-en="State / Province">ریاست<span class="req-star"> *</span></label><input type="text" id="wzPAddr_state"></div>
+                <div class="field"><label data-ur="پن کوڈ" data-en="Pincode">پن کوڈ<span class="req-star"> *</span></label><input type="text" id="wzPAddr_pin" inputmode="numeric" style="direction:ltr;text-align:start"></div>
+                <div class="field"><label data-ur="ملک" data-en="Country">ملک<span class="req-star"> *</span></label><input type="text" id="wzPAddr_country" value="India"></div>
               </div>
 
               <div class="wz-sub" data-ur="مصروفیات (والد/سرپرست)" data-en="Occupation (father/guardian)">مصروفیات<span class="req-star"> *</span></div>
@@ -2276,8 +2281,14 @@ const WZ_REQUIRED=[
   ['wzCourse',null,()=>th2('Class / Course','درجہ / کورس'),2],
   ['wzAddr_city',null,()=>th2('Current address — City/Village','موجودہ پتہ — شہر/گاؤں'),3],
   ['wzAddr_dist',null,()=>th2('Current address — District','موجودہ پتہ — ضلع'),3],
+  ['wzAddr_state',null,()=>th2('Current address — State','موجودہ پتہ — ریاست'),3],
+  ['wzAddr_pin',null,()=>th2('Current address — Pincode','موجودہ پتہ — پن کوڈ'),3],
+  ['wzAddr_country',null,()=>th2('Current address — Country','موجودہ پتہ — ملک'),3],
   ['wzPAddr_city',null,()=>th2('Permanent address — City/Village','مستقل پتہ — شہر/گاؤں'),3],
   ['wzPAddr_dist',null,()=>th2('Permanent address — District','مستقل پتہ — ضلع'),3],
+  ['wzPAddr_state',null,()=>th2('Permanent address — State','مستقل پتہ — ریاست'),3],
+  ['wzPAddr_pin',null,()=>th2('Permanent address — Pincode','مستقل پتہ — پن کوڈ'),3],
+  ['wzPAddr_country',null,()=>th2('Permanent address — Country','مستقل پتہ — ملک'),3],
   ['wzOccupation',null,()=>th2('Occupation (father/guardian)','مصروفیات'),3],
   ['wzEduWClass',null,()=>th2('Worldly — class','دنیاوی — درجہ'),3],
   ['wzEduWSchool',null,()=>th2('Worldly — school','دنیاوی — اسکول'),3],
@@ -2367,12 +2378,12 @@ function wzCollectRecord(){
   else {rec.createdAt=Date.now();rec.stage='registered';rec.admissionNo=g('wzAdmNo');}
   return {rec,name,ex};
 }
-const ADDR_KEYS=['house','street','area','city','teh','dist','state','pin','country'];
+const ADDR_KEYS=['house','street','ward','area','city','teh','dist','state','pin','country'];
 function wzReadAddr(prefix){const g=id=>{const el=document.getElementById(id);return el?el.value.trim():'';};const o={};ADDR_KEYS.forEach(k=>o[k]=g(prefix+k));return o;}
 function wzWriteAddr(prefix,o){o=o||{};ADDR_KEYS.forEach(k=>{const el=document.getElementById(prefix+k);if(el)el.value=(o[k]!=null&&o[k]!=='')?o[k]:(k==='country'?'India':'');});}
 function addrToString(o){
   o=o||{};
-  const line=[o.house,o.street,o.area,o.city,o.teh,o.dist,o.state].filter(Boolean).join(', ');
+  const line=[o.house,o.street,o.ward?('Ward '+o.ward):'',o.area,o.city,o.teh,o.dist,o.state].filter(Boolean).join(', ');
   return line+(o.pin?(' - '+o.pin):'')+(o.country&&o.country!=='India'?(', '+o.country):'');
 }
 function wzCopyCurToPerm(){const cur=wzReadAddr('wzAddr_');wzWriteAddr('wzPAddr_',cur);}
