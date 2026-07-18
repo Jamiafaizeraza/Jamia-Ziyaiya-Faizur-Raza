@@ -38,6 +38,7 @@
   .nav button.active{background:#fff;color:var(--green);font-weight:600;}
   .nav-caret{margin-inline-start:auto;font-size:11px;transition:.2s;}
   .nav-caret.open{transform:rotate(180deg);}
+  .nav-multi{margin-inline-start:auto;font-size:15px;opacity:.55;}
   .nav-sub{display:none;flex-direction:column;gap:2px;margin:2px 0 4px;}
   .nav-sub.open{display:flex;}
   .nav-sub button{all:unset;cursor:pointer;display:flex;align-items:center;gap:8px;padding:9px 14px 9px 40px;border-radius:9px;font-size:13.5px;color:rgba(255,255,255,.72);transition:.15s;}
@@ -589,18 +590,10 @@
       <button id="nav-att" onclick="showView('att')"><span class="ic">✅</span><span data-ur="حاضری" data-en="Attendance">حاضری</span></button>
       <button id="nav-marks" onclick="showView('marks')"><span class="ic">📊</span><span data-ur="نتائج" data-en="Results">نتائج</span></button>
       <button id="nav-lookup" onclick="showView('lookup')"><span class="ic">🔎</span><span data-ur="نتیجہ تلاش" data-en="Check Result">نتیجہ تلاش</span></button>
-      <button id="nav-fees" onclick="showView('fees')"><span class="ic">💰</span><span data-ur="فیس" data-en="Fees">فیس</span></button>
-      <button id="nav-lib" onclick="showView('lib')"><span class="ic">📚</span><span data-ur="کتب خانہ" data-en="Library">کتب خانہ</span></button>
-      <button id="nav-reports" onclick="toggleReportsMenu()"><span class="ic">📈</span><span data-ur="رپورٹس" data-en="Reports">رپورٹس</span><span class="nav-caret" id="repCaret">▾</span></button>
-      <div class="nav-sub" id="reportsSub">
-        <button data-rep="summary" onclick="showReportSection('summary')" data-ur="خلاصہ رپورٹ" data-en="Summary">خلاصہ رپورٹ</button>
-        <button data-rep="class" onclick="showReportSection('class')" data-ur="درجہ وار طلباء" data-en="Students by class">درجہ وار طلباء</button>
-        <button data-rep="status" onclick="showReportSection('status')" data-ur="اسٹوڈنٹ اسٹیٹس رپورٹ" data-en="Student status">اسٹوڈنٹ اسٹیٹس رپورٹ</button>
-        <button data-rep="att" onclick="showReportSection('att')" data-ur="حاضری رپورٹ" data-en="Attendance">حاضری رپورٹ</button>
-        <button data-rep="result" onclick="showReportSection('result')" data-ur="نتائج / امتحان رپورٹ" data-en="Results / Exam">نتائج / امتحان رپورٹ</button>
-        <button onclick="showView('list')" data-ur="طلباء لسٹ / CSV" data-en="Students / CSV">طلباء لسٹ / CSV</button>
-      </div>
-      <button id="nav-set" onclick="showView('set')"><span class="ic">⚙️</span><span data-ur="سیٹنگز" data-en="Settings">سیٹنگز</span></button>
+      <button id="nav-fees" onclick="showView('fees')"><span class="ic">💰</span><span data-ur="فیس" data-en="Fees">فیس</span><span class="nav-multi">›</span></button>
+      <button id="nav-lib" onclick="showView('lib')"><span class="ic">📚</span><span data-ur="کتب خانہ" data-en="Library">کتب خانہ</span><span class="nav-multi">›</span></button>
+      <button id="nav-reports" onclick="showView('reports')"><span class="ic">📈</span><span data-ur="رپورٹس" data-en="Reports">رپورٹس</span><span class="nav-multi">›</span></button>
+      <button id="nav-set" onclick="showView('set')"><span class="ic">⚙️</span><span data-ur="سیٹنگز" data-en="Settings">سیٹنگز</span><span class="nav-multi">›</span></button>
     </nav>
     <div class="side-foot">
       <span class="badge-store" id="storeBadge">Local Storage</span><br><br>
@@ -1006,7 +999,8 @@
       <div id="view-marks" style="display:none">
         <div class="quickadd">
           <div class="field"><label data-ur="نئے امتحان کا نام" data-en="New exam name">نئے امتحان کا نام</label><input type="text" id="exName" data-ur-ph="مثلاً ماہانہ ٹیسٹ جنوری، سالانہ امتحان" data-en-ph="e.g. Monthly Test Jan, Annual Exam"></div>
-          <div class="field" style="max-width:170px"><label data-ur="تاریخ" data-en="Date">تاریخ</label><input type="date" id="exDate"></div>
+          <div class="field" style="max-width:170px"><label data-ur="شروع تاریخ" data-en="From date">شروع تاریخ</label><input type="date" id="exDateFrom"></div>
+          <div class="field" style="max-width:170px"><label data-ur="آخری تاریخ" data-en="To date">آخری تاریخ</label><input type="date" id="exDateTo"></div>
           <button class="btn btn-primary btn-sm" onclick="addExam()" data-ur="امتحان شامل کریں" data-en="Add exam">امتحان شامل کریں</button>
         </div>
         <div class="toolbar">
@@ -1045,6 +1039,13 @@
           <div class="set-nav" id="repNav"></div>
           <div class="set-panel" id="repPanel">
         <div class="rep-grid" id="repSummary" data-sec="summary"></div>
+
+        <div class="rep-sec" data-sec="yearwise">
+          <div class="list-toolbar"><span class="lt-title" data-ur="سال وار رجسٹریشن" data-en="Year-wise registrations">سال وار رجسٹریشن</span>
+            <div class="lt-btns"><button class="btn btn-ghost btn-sm" onclick="exportRep('yearwise','csv')">⬇ Excel</button><button class="btn btn-ghost btn-sm" onclick="exportRep('yearwise','pdf')">🖨️ PDF</button></div></div>
+          <p class="set-hint" data-ur="ہر سال کتنے طلباء رجسٹر ہوئے اور ان میں سے کتنے منتخب (داخل) ہوئے۔ کسی سال پر کلک کر کے اُس سال کی مکمل لسٹ دیکھیں۔" data-en="How many students registered each year and how many were selected (admitted). Click a year to see its full list.">ہر سال کے رجسٹریشن اور منتخب طلباء کی تعداد — سال پر کلک کر کے لسٹ دیکھیں۔</p>
+          <div id="repYearwise"></div>
+        </div>
 
         <div class="rep-sec" data-sec="class">
           <div class="list-toolbar"><span class="lt-title" data-ur="درجہ وار طلباء" data-en="Students by class">درجہ وار طلباء</span>
@@ -1962,6 +1963,7 @@ function showView(v){
     const nv=document.getElementById('nav-'+x); if(nv)nv.classList.toggle('active',x===v);
   });
   if(['list','reg','online','regtest','admit','form','transfer','sstat','rooms'].includes(v)){const nl=document.getElementById('nav-list');if(nl)nl.classList.add('active');const ss=document.getElementById('studentsSub');if(ss)ss.classList.add('open');const sc=document.getElementById('stuCaret');if(sc)sc.classList.add('open');}
+  else{const ss=document.getElementById('studentsSub');if(ss)ss.classList.remove('open');const sc=document.getElementById('stuCaret');if(sc)sc.classList.remove('open');}
   document.querySelectorAll('#studentsSub button[data-sview]').forEach(b=>b.classList.toggle('rep-active',b.getAttribute('data-sview')===v));
   if(v!=='reports')document.querySelectorAll('#reportsSub button.rep-active').forEach(b=>b.classList.remove('rep-active'));
   setTitle(v);
@@ -3385,15 +3387,23 @@ function updateAttSummary(){
 }
 
 /* ===== RESULTS / MARKS ===== */
+function examDateLabel(e){
+  if(!e)return '';
+  if(e.dateFrom&&e.dateTo&&e.dateFrom!==e.dateTo)return ' — '+e.dateFrom+' → '+e.dateTo;
+  if(e.date)return ' — '+e.date;
+  return '';
+}
 function addExam(){
   const name=document.getElementById('exName').value.trim();
   if(!name){toast(t('examReq'));return;}
-  const date=document.getElementById('exDate').value||today();
+  const from=document.getElementById('exDateFrom').value||today();
+  const to=document.getElementById('exDateTo').value||from;
+  if(to<from){toast(th2('End date cannot be before start date','آخری تاریخ شروع تاریخ سے پہلے نہیں ہو سکتی'));return;}
   const ex=getExams();const id=genId('ex_');
-  ex.push({id,name,date});saveExams(ex);
-  document.getElementById('exName').value='';document.getElementById('exDate').value='';
+  ex.push({id,name,date:from,dateFrom:from,dateTo:to});saveExams(ex);
+  document.getElementById('exName').value='';document.getElementById('exDateFrom').value='';document.getElementById('exDateTo').value='';
   toast(t('examAdded'));
-  const yr=(date||'').slice(0,4)||'—';
+  const yr=(from||'').slice(0,4)||'—';
   if(_mkYears!==null&&!_mkYears.includes(yr))_mkYears.push(yr);
   fillMkYears();fillExamByYearsMulti();
   document.getElementById('mkExam').value=id;
@@ -3411,7 +3421,7 @@ function delCurrentExam(){
 function fillExamSelect(cur){
   const el=document.getElementById('mkExam');if(!el)return;
   const ex=getExams();
-  el.innerHTML=`<option value="">${t('selectExam')}</option>`+ex.map(e=>`<option value="${e.id}" ${e.id===cur?'selected':''}>${esc(e.name)}${e.date?(' — '+e.date):''}</option>`).join('');
+  el.innerHTML=`<option value="">${t('selectExam')}</option>`+ex.map(e=>`<option value="${e.id}" ${e.id===cur?'selected':''}>${esc(e.name)}${examDateLabel(e)}</option>`).join('');
 }
 function examYear(ex){return (ex.date||'').slice(0,4)||'—';}
 function examYears(){return [...new Set(getExams().map(examYear))].sort((a,b)=>String(b).localeCompare(String(a)));}
@@ -3425,7 +3435,7 @@ function fillExamByYear(examElId,yearElId){
   const ye=document.getElementById(yearElId);const y=ye?ye.value:'';
   const cur=el.value;
   const ex=getExams().filter(e=>examYear(e)===y);
-  el.innerHTML=`<option value="">${t('selectExam')}</option>`+ex.map(e=>`<option value="${e.id}" ${e.id===cur?'selected':''}>${esc(e.name)}${e.date?(' — '+e.date):''}</option>`).join('');
+  el.innerHTML=`<option value="">${t('selectExam')}</option>`+ex.map(e=>`<option value="${e.id}" ${e.id===cur?'selected':''}>${esc(e.name)}${examDateLabel(e)}</option>`).join('');
 }
 function mkYearChange(){fillExamByYear('mkExam','mkYear');renderMarksGrid();}
 let _mkYears=null; /* null = all years selected */
@@ -3559,7 +3569,7 @@ function fillExamByYearsMulti(){
   const el=document.getElementById('mkExam');if(!el)return;
   const sel=mkSelectedYears();const cur=el.value;
   const ex=getExams().filter(e=>sel.includes(examYear(e)));
-  el.innerHTML=`<option value="">${t('selectExam')}</option>`+ex.map(e=>`<option value="${e.id}" ${e.id===cur?'selected':''}>${esc(e.name)}${e.date?(' — '+e.date):''}</option>`).join('');
+  el.innerHTML=`<option value="">${t('selectExam')}</option>`+ex.map(e=>`<option value="${e.id}" ${e.id===cur?'selected':''}>${esc(e.name)}${examDateLabel(e)}</option>`).join('');
 }
 function toggleMkYear(y){
   const ys=examYears();if(_mkYears===null)_mkYears=ys.slice();
@@ -3666,7 +3676,7 @@ function resultCardInner(examId,s){
   const rows=subs.map(su=>{const v=rec[su.id];
     return `<tr><td>${esc(su.name)}</td><td>${esc(String(su.max))}</td><td>${esc(String(v))}</td></tr>`;}).join('');
   return `<h1 class="rc-h">${t('resultCard')}</h1>
-    <div class="rc-ex">${esc(ex?ex.name:'')}${ex&&ex.date?(' • '+esc(ex.date)):''}</div>
+    <div class="rc-ex">${esc(ex?ex.name:'')}${ex?(' • '+examDateLabel(ex).replace(' — ','')):''}</div>
     <div class="rc-info">
       <div><b>${esc(th2('Name','نام'))}:</b> ${esc(s.name)}</div>
       <div><b>${esc(th2('Adm. No','داخلہ نمبر'))}:</b> ${esc(s.admissionNo||'—')}</div>
@@ -3708,7 +3718,7 @@ function renderLookup(){
   const pys=getPubYears();
   const ys=document.getElementById('lkYearShow');if(ys)ys.textContent=pys.length?pys.join('، '):'—';
   const ex=getExams().filter(e=>pys.includes(examYear(e))).sort((a,b)=>String(b.date||'').localeCompare(String(a.date||'')));
-  el.innerHTML=`<option value="">${t('selectExam')}</option>`+ex.map(e=>`<option value="${e.id}">${esc(e.name)}${e.date?(' — '+e.date):''}</option>`).join('');
+  el.innerHTML=`<option value="">${t('selectExam')}</option>`+ex.map(e=>`<option value="${e.id}">${esc(e.name)}${examDateLabel(e)}</option>`).join('');
   document.getElementById('lkResult').innerHTML='';
 }
 function doLookup(){
@@ -3789,14 +3799,16 @@ function repAttData(){
 }
 function repResultData(){
   const examId=(document.getElementById('repExam')||{}).value||'';
-  const cols=[th2('Class','درجہ'),th2('Appeared','شریک'),th2('Pass','کامیاب'),th2('Fail','ناکام'),th2('Avg %','اوسط %'),th2('Topper','اوّل')];
+  const cols=[th2('Class','درجہ'),th2('Appeared','شریک'),th2('Pass','کامیاب'),th2('Fail','ناکام'),th2('Avg %','اوسط %'),th2('Top 3','ٹاپ 3')];
   let rows=[];
   if(examId){
     const admitted=dbGetAll().filter(s=>s.stage==='admitted');
     rows=getClasses().map(c=>{
-      const studs=admitted.filter(s=>s.cls===c.name);let app=0,pass=0,sum=0,top=null,tp=-1;
-      studs.forEach(s=>{const r=calcResult(examId,s.id);if(r.any){app++;sum+=r.pct;if(r.pct>=40)pass++;if(r.pct>tp){tp=r.pct;top=s;}}});
-      return app?[c.name,app,pass,app-pass,(Math.round(sum/app*10)/10)+'%',top?(top.name+' ('+tp+'%)'):'—']:null;
+      const studs=admitted.filter(s=>s.cls===c.name);let app=0,pass=0,sum=0;const scored=[];
+      studs.forEach(s=>{const r=calcResult(examId,s.id);if(r.any){app++;sum+=r.pct;if(r.pct>=40)pass++;scored.push({name:s.name,pct:r.pct});}});
+      scored.sort((a,b)=>b.pct-a.pct);
+      const top3=scored.slice(0,3).map(x=>x.name+' ('+x.pct+'%)').join(', ');
+      return app?[c.name,app,pass,app-pass,(Math.round(sum/app*10)/10)+'%',top3||'—']:null;
     }).filter(Boolean);
   }
   return {cols,rows,examId};
@@ -3804,7 +3816,7 @@ function repResultData(){
 function fillReportExam(){
   const el=document.getElementById('repExam');if(!el)return;
   const cur=el.value;const ex=getExams();
-  el.innerHTML=`<option value="">${t('selectExam')}</option>`+ex.map(e=>`<option value="${e.id}" ${e.id===cur?'selected':''}>${esc(e.name)}${e.date?(' — '+e.date):''}</option>`).join('');
+  el.innerHTML=`<option value="">${t('selectExam')}</option>`+ex.map(e=>`<option value="${e.id}" ${e.id===cur?'selected':''}>${esc(e.name)}${examDateLabel(e)}</option>`).join('');
 }
 function renderClassReport(){const d=repClassData();document.getElementById('repClass').innerHTML=repTable(d.cols,d.rows);}
 function renderStatusView(){
@@ -4643,23 +4655,128 @@ function exportClassAtt(cname,fmt){
 }
 function renderResultReport(){
   const d=repResultData();
-  document.getElementById('repResult').innerHTML=d.examId?repTable(d.cols,d.rows):`<div class="set-empty">${t('selectExam')}</div>`;
+  _repResultOpenCls=null;
+  if(!d.examId){document.getElementById('repResult').innerHTML=`<div class="set-empty">${t('selectExam')}</div>`;return;}
+  if(!d.rows.length){document.getElementById('repResult').innerHTML=`<div class="set-empty">${t('noData')}</div>`;return;}
+  const ncols=d.cols.length;
+  const table=`<div class="table-wrap" style="box-shadow:none"><table><thead><tr>${d.cols.map(c=>`<th>${esc(c)}</th>`).join('')}</tr></thead><tbody>${
+    d.rows.map(r=>{
+      const clsId='rrCls_'+r[0].replace(/[^a-zA-Z0-9]/g,'_');
+      return `<tr style="cursor:pointer" onclick="repResultClassDetail('${esc(r[0])}','${clsId}')" title="${th2('Click to see full ranked list','مکمل رینک شدہ لسٹ کے لیے کلک کریں')}">${r.map((x,i)=>i===0?`<td style="color:var(--green-2);font-weight:600">${esc(String(x))}</td>`:`<td>${esc(String(x))}</td>`).join('')}</tr>
+      <tr id="${clsId}" style="display:none"><td colspan="${ncols}" style="padding:0;background:var(--bg2,#f7f9fc)"><div class="rr-detail" style="padding:10px 14px"></div></td></tr>`;
+    }).join('')
+  }</tbody></table></div>`;
+  document.getElementById('repResult').innerHTML=table;
+}
+let _repResultOpenCls=null;
+function repResultClassDetail(clsName,rowId){
+  const rowEl=document.getElementById(rowId);if(!rowEl)return;
+  if(_repResultOpenCls===clsName){
+    rowEl.style.display='none';rowEl.querySelector('.rr-detail').innerHTML='';
+    _repResultOpenCls=null;return;
+  }
+  // close any previously open row
+  if(_repResultOpenCls){
+    document.querySelectorAll('.rr-detail').forEach(el=>{el.innerHTML='';});
+    document.querySelectorAll('#repResult tr[id^="rrCls_"]').forEach(el=>{el.style.display='none';});
+  }
+  _repResultOpenCls=clsName;
+  const examId=(document.getElementById('repExam')||{}).value||'';if(!examId)return;
+  const studs=dbGetAll().filter(s=>s.stage==='admitted'&&s.cls===clsName);
+  const scored=[];
+  studs.forEach(s=>{const r=calcResult(examId,s.id);if(r.any)scored.push({s,pct:r.pct});});
+  scored.sort((a,b)=>b.pct-a.pct);
+  const rows=scored.map((x,i)=>`<tr><td>${i+1}</td><td>${esc(x.s.name||'')}</td><td>${esc(x.s.admissionNo||x.s.regNo||'')}</td><td>${x.pct}%</td><td>${x.pct>=40?`<span style="color:#16a34a;font-weight:600">${th2('Pass','کامیاب')}</span>`:`<span style="color:#c0392b;font-weight:600">${th2('Fail','ناکام')}</span>`}</td></tr>`).join('');
+  rowEl.querySelector('.rr-detail').innerHTML=`
+    <div class="list-toolbar"><span class="lt-title">${esc(clsName)} — ${th2('Ranked list','رینک شدہ لسٹ')} (${scored.length})</span>
+      <div class="lt-btns"><button class="btn btn-ghost btn-sm" onclick="event.stopPropagation();document.getElementById('${rowId}').style.display='none';document.getElementById('${rowId}').querySelector('.rr-detail').innerHTML='';_repResultOpenCls=null">✕ ${th2('Close','بند کریں')}</button></div></div>
+    <div class="table-wrap"><table><thead><tr><th>${th2('Rank','رینک')}</th><th>${th2('Name','نام')}</th><th>${th2('Adm/Reg No','داخلہ/رجسٹریشن نمبر')}</th><th>${th2('%','فیصد')}</th><th>${th2('Result','نتیجہ')}</th></tr></thead><tbody>${rows||`<tr><td colspan="5" style="text-align:center;color:var(--muted)">${t('noData')}</td></tr>`}</tbody></table></div>`;
+  rowEl.style.display='';
 }
 function buildRepNav(){
   const nav=document.getElementById('repNav');if(!nav)return;
   const items=[
     ['summary','📊',th2('Summary','خلاصہ')],
+    ['yearwise','📅',th2('Year-wise registrations','سال وار رجسٹریشن')],
     ['class','🏫',th2('Students by class','درجہ وار طلباء')],
     ['status','🏷️',th2('Student status','اسٹوڈنٹ اسٹیٹس')],
     ['att','✅',th2('Attendance','حاضری')],
-    ['result','📝',th2('Results / Exam','نتائج / امتحان')]
+    ['result','📝',th2('Results / Exam','نتائج / امتحان')],
+    ['csv','📄',th2('Students / CSV','طلباء لسٹ / CSV')]
   ];
-  nav.innerHTML=items.map(([k,ic,lbl])=>`<button data-k="${k}" onclick="showReportSection('${k}')"><span class="sic">${ic}</span><span>${esc(lbl)}</span><span class="schev">›</span></button>`).join('');
+  nav.innerHTML=items.map(([k,ic,lbl])=>{
+    if(k==='csv')return `<button onclick="showView('list')"><span class="sic">${ic}</span><span>${esc(lbl)}</span><span class="schev">›</span></button>`;
+    return `<button data-k="${k}" onclick="showReportSection('${k}')"><span class="sic">${ic}</span><span>${esc(lbl)}</span><span class="schev">›</span></button>`;
+  }).join('');
   const keys=items.map(i=>i[0]);
   if(!keys.includes(_repSec))_repSec='summary';
 }
+function regYear(s){
+  const m=/^IN(\d\d)-/.exec(s.regNo||'');
+  if(m)return 2000+Number(m[1]);
+  const m2=/^SP(\d\d)-/.exec(s.specialNo||'');
+  if(m2)return 2000+Number(m2[1]);
+  if(s.createdAt)return new Date(s.createdAt).getFullYear();
+  return null;
+}
+function renderRepYearwise(){
+  const box=document.getElementById('repYearwise');if(!box)return;
+  const all=dbGetAll();
+  const byYear={};
+  all.forEach(s=>{
+    const y=regYear(s);if(!y)return;
+    if(!byYear[y])byYear[y]={total:0,admitted:0,rejected:0,pending:0};
+    byYear[y].total++;
+    if(s.stage==='admitted')byYear[y].admitted++;
+    else if(s.stage==='rejected')byYear[y].rejected++;
+    else byYear[y].pending++;
+  });
+  const years=Object.keys(byYear).map(Number).sort((a,b)=>b-a);
+  _repYearOpen=null;
+  if(!years.length){box.innerHTML=`<div class="set-empty">${t('noData')}</div>`;return;}
+  box.innerHTML=`<div class="table-wrap"><table><thead><tr>
+    <th>${th2('Year','سال')}</th><th>${th2('Registered','رجسٹرڈ')}</th><th>${th2('Selected / Admitted','منتخب / داخل')}</th><th>${th2('Rejected','مسترد')}</th><th>${th2('Pending','زیرِ التوا')}</th>
+  </tr></thead><tbody>${years.map(y=>{
+    const d=byYear[y];
+    return `<tr>
+      <td style="cursor:pointer" onclick="repYearToggle(${y})" title="${th2('Click for full list','مکمل لسٹ کے لیے کلک کریں')}"><b>${y}</b></td>
+      <td style="cursor:pointer" onclick="repYearToggle(${y},'all')" title="${th2('Click for full list','مکمل لسٹ کے لیے کلک کریں')}">${d.total}</td>
+      <td style="color:#16a34a;font-weight:600;cursor:pointer" onclick="repYearToggle(${y},'admitted')" title="${th2('Click for admitted list','داخل شدہ لسٹ کے لیے کلک کریں')}">${d.admitted}</td>
+      <td style="color:#c0392b;cursor:pointer" onclick="repYearToggle(${y},'rejected')" title="${th2('Click for rejected list','مسترد لسٹ کے لیے کلک کریں')}">${d.rejected}</td>
+      <td style="color:var(--muted);cursor:pointer" onclick="repYearToggle(${y},'pending')" title="${th2('Click for pending list','زیرِ التوا لسٹ کے لیے کلک کریں')}">${d.pending}</td>
+    </tr>`;
+  }).join('')}</tbody></table></div>
+  <div id="repYearDetail" style="margin-top:14px"></div>`;
+}
+let _repYearOpen=null,_repYearFilter=null;
+function repYearToggle(y,filter){
+  filter=filter||'all';
+  if(_repYearOpen===y&&_repYearFilter===filter){
+    document.getElementById('repYearDetail').innerHTML='';
+    _repYearOpen=null;_repYearFilter=null;
+  }else{
+    repYearDetail(y,filter);
+    _repYearOpen=y;_repYearFilter=filter;
+  }
+}
+function repYearDetail(y,filter){
+  filter=filter||'all';
+  let all=dbGetAll().filter(s=>regYear(s)===y);
+  if(filter==='admitted')all=all.filter(s=>s.stage==='admitted');
+  else if(filter==='rejected')all=all.filter(s=>s.stage==='rejected');
+  else if(filter==='pending')all=all.filter(s=>s.stage!=='admitted'&&s.stage!=='rejected');
+  all.sort((a,b)=>(a.regNo||'').localeCompare(b.regNo||''));
+  const stageLbl=s=>s.stage==='admitted'?th2('Admitted','داخل'):(s.stage==='rejected'?th2('Not allowed','مسترد'):(s.stage==='registered'?th2('Registered','رجسٹرڈ'):(s.stage||'—')));
+  const rows=all.map((s,i)=>`<tr style="cursor:pointer" onclick="viewProfile('${s.id}')" title="${th2('Click to view full profile','مکمل پروفائل دیکھنے کے لیے کلک کریں')}"><td>${i+1}</td><td>${esc(s.name||'')}</td><td>${esc(s.fatherName||'')}</td><td>${esc(s.regNo||s.specialNo||'')}</td><td>${esc(s.cls||'—')}</td><td>${stageLbl(s)}</td></tr>`).join('');
+  const filterLbl={all:th2('All','تمام'),admitted:th2('Selected / Admitted','منتخب / داخل'),rejected:th2('Rejected','مسترد'),pending:th2('Pending','زیرِ التوا')}[filter];
+  document.getElementById('repYearDetail').innerHTML=`
+    <div class="list-toolbar"><span class="lt-title">${y} — ${filterLbl} (${all.length})</span>
+      <div class="lt-btns"><button class="btn btn-ghost btn-sm" onclick="document.getElementById('repYearDetail').innerHTML='';_repYearOpen=null;_repYearFilter=null">✕ ${th2('Close','بند کریں')}</button></div></div>
+    <div class="table-wrap"><table><thead><tr><th>#</th><th>${th2('Name','نام')}</th><th>${th2("Father",'والد')}</th><th>${th2('Reg No','رجسٹریشن نمبر')}</th><th>${th2('Class','درجہ')}</th><th>${th2('Status','حالت')}</th></tr></thead><tbody>${rows||`<tr><td colspan="6" style="text-align:center;color:var(--muted)">${t('noData')}</td></tr>`}</tbody></table></div>`;
+}
 function renderReports(){
   buildRepNav();
+  renderRepYearwise();
   const all=dbGetAll();
   const admitted=all.filter(s=>s.stage==='admitted').length;
   const pending=all.filter(s=>s.stage==='registered').length;
@@ -4675,11 +4792,20 @@ function renderReports(){
 }
 function exportRep(type,fmt){
   let d,title;
-  if(type==='class'){d=repClassData();title=th2('Students by class','درجہ وار طلباء');}
+  if(type==='yearwise'){d=repYearwiseData();title=th2('Year-wise registrations','سال وار رجسٹریشن');}
+  else if(type==='class'){d=repClassData();title=th2('Students by class','درجہ وار طلباء');}
   else if(type==='status'){d=repStatusData();title=th2('Students by status','حالت وار طلباء');}
   else if(type==='att'){d=repAttData();title=th2('Attendance','حاضری')+' '+d.from+' → '+d.to;}
   else {d=repResultData();if(!d.examId){toast(t('selectExam'));return;}title=th2('Results','نتائج');}
   if(fmt==='csv')downloadCSVRows(title,d.cols,d.rows);else printTable(title,d.cols,d.rows);
+}
+function repYearwiseData(){
+  const all=dbGetAll();const byYear={};
+  all.forEach(s=>{const y=regYear(s);if(!y)return;if(!byYear[y])byYear[y]={total:0,admitted:0,rejected:0,pending:0};byYear[y].total++;if(s.stage==='admitted')byYear[y].admitted++;else if(s.stage==='rejected')byYear[y].rejected++;else byYear[y].pending++;});
+  const years=Object.keys(byYear).map(Number).sort((a,b)=>b-a);
+  const cols=[th2('Year','سال'),th2('Registered','رجسٹرڈ'),th2('Selected / Admitted','منتخب / داخل'),th2('Rejected','مسترد'),th2('Pending','زیرِ التوا')];
+  const rows=years.map(y=>[y,byYear[y].total,byYear[y].admitted,byYear[y].rejected,byYear[y].pending]);
+  return {cols,rows};
 }
 
 /* ===== EXPORT (Excel/CSV + PDF) — reusable for any student list ===== */
